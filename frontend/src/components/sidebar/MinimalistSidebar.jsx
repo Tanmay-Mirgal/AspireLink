@@ -8,7 +8,7 @@ import {
   Users, 
   Settings, 
   Film, 
-  Camera 
+  Camera ,LogOut
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -22,6 +22,7 @@ const MinimalistSidebar = () => {
     { icon: <Settings />, key: "settings", path: "/settings" },
     { icon: <Send />, key: "login", path: "/login" },
     { icon: <Cloud />, key: "signup", path: "/signup" },
+    { icon: <LogOut />, key: "logout", path: "/logout" },
   ];
 
   return (
@@ -51,6 +52,17 @@ const MinimalistSidebar = () => {
         <Menu />
       </button>
 
+      <div className="mt-auto pb-4 flex items-center">
+        <img 
+          src="/api/placeholder/40/40" 
+          alt="Profile" 
+          className="w-10 h-10 rounded-full border-2 border-white/20"
+        />
+        {isExpanded && (
+          <span className="ml-3 text-sm text-gray-300">Profile</span>
+        )}
+      </div>
+
       {/* Navigation Items */}
       <div className="flex flex-col space-y-4 w-full px-2">
         {navItems.map((item) => (
@@ -78,7 +90,7 @@ const MinimalistSidebar = () => {
       </div>
 
       {/* Profile Image at Bottom */}
-      <div className="mt-auto pb-4 flex items-center">
+      {/* <div className="mt-auto pb-4 flex items-center">
         <img 
           src="/api/placeholder/40/40" 
           alt="Profile" 
@@ -87,7 +99,7 @@ const MinimalistSidebar = () => {
         {isExpanded && (
           <span className="ml-3 text-sm text-gray-300">Profile</span>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
