@@ -8,8 +8,8 @@ function Home() {
         <>
        
         <div className="flex">
-            <MinimalistSidebar/>
-            <main className="flex-grow">
+          
+            <main className="flex-grow ml-16">
                 <LandingPage />
             </main>
         </div>
