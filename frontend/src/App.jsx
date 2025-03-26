@@ -1,13 +1,17 @@
-import React from 'react'
-import { Button } from '@/components/ui/button'
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './pages/Home/Home';
+
 
 function App() {
   return (
-    <div>
-      Hello
-      <Button>Click me</Button>
-    </div>
-  )
+    <Router>
+      <Routes>
+         <Route path="/" element={<Home />} />
+        
+      </Routes>
+    </Router>
+  );
 }
 
-export default App
+export default App;
