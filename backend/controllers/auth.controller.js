@@ -37,12 +37,7 @@ export const register = async (req, res) => {
     res.status(201).json({
       message: "User registered successfully",
       token,
-      user: {
-        id: savedUser._id,
-        fullName: savedUser.fullName,
-        email: savedUser.email,
-        profilePic: savedUser.profilePic,
-      },
+      user:savedUser
     });
   } catch (error) {
     console.error("Registration error:", error);
@@ -82,14 +77,7 @@ export const login = async (req, res) => {
     res.status(200).json({
       message: "Login successful",
       token,
-      user: {
-        id: user._id,
-        firstName: user.fullName.firstName,
-        lastName: user.fullName.lastName,
-        email: user.email,
-        role: user.role,
-        profilePic: user.profilePic,
-      },
+      user
     });
   } catch (error) {
     console.error("Login error:", error);
@@ -120,13 +108,7 @@ export const setRole = async (req, res) => {
 
     res.status(200).json({
       message: "Role updated successfully",
-      user: {
-        id: user._id,
-        firstName: user.fullName.firstName,
-        lastName: user.fullName.lastName,
-        email: user.email,
-        role: user.role,
-      },
+      user
     });
   } catch (error) {
     console.error("Set role error:", error);

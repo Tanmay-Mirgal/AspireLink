@@ -50,7 +50,7 @@ const SignupPage = () => {
       const user = await signup({ firstName, lastName, email, password });
       
       // Optional: Navigate to dashboard or profile page after signup
-      navigate('/dashboard');
+      navigate('/role');
     } catch (error) {
       // Error handling is done in the signup function via toast
       console.error('Signup error:', error);

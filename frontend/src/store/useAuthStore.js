@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import { toast } from 'react-hot-toast';
 import { axiosInstance } from '@/lib/axios';
 
-export const useAuthStore = create((set) => ({
+export const useAuthStore = create((set,get) => ({
   user: JSON.parse(localStorage.getItem('user') || 'null'),
   isLoading: false,
   isError: false,
@@ -135,4 +135,38 @@ export const useAuthStore = create((set) => ({
       throw error;
     }
   },
+
+  setRole: async (role) => {
+    try {
+      // Implement API call to update user role
+      const response = await axiosInstance.post('/auth/set-role', { role });
+      
+      // Update local user data
+      const currentUser = get().user;
+      const updatedUser = { ...currentUser, role };
+      
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      set({ 
+        user: updatedUser,
+        isLoading: false,
+        isError: false 
+      });
+
+      toast.success(`Role updated to ${role}`);
+      return updatedUser;
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error?.response?.data?.message || 'Failed to update role';
+      
+      set({ 
+        isError: true, 
+        error: errorMessage, 
+        isLoading: false 
+      });
+      
+      toast.error(errorMessage);
+      throw error;
+    }
+  }
 }));
