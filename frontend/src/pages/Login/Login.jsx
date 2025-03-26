@@ -1,12 +1,76 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Card } from '@/components/ui/card';
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 const LoginPage = () => {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: '',
+    password: '',
+    rememberMe: false
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { login } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Basic form validation
+    if (!formData.email || !formData.password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const user = await login({
+        email: formData.email,
+        password: formData.password
+      });
+      
+      // If remember me is checked, store email in localStorage
+      if (formData.rememberMe) {
+        localStorage.setItem('rememberedEmail', formData.email);
+      } else {
+        localStorage.removeItem('rememberedEmail');
+      }
+      
+      // Navigate to dashboard or profile page after login
+      navigate('/dashboard');
+    } catch (error) {
+      // Error handling is done in the login function via toast
+      console.error('Login error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Check for remembered email on component mount
+  React.useEffect(() => {
+    const rememberedEmail = localStorage.getItem('rememberedEmail');
+    if (rememberedEmail) {
+      setFormData(prev => ({
+        ...prev,
+        email: rememberedEmail,
+        rememberMe: true
+      }));
+    }
+  }, []);
 
   return (
     <div className="flex min-h-screen w-full">
@@ -51,21 +115,30 @@ const LoginPage = () => {
             <div className="h-px bg-gray-200 flex-1"></div>
           </div>
 
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Input 
                 type="email" 
+                name="email"
                 placeholder="Email" 
                 className="py-5"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
               />
             </div>
             <div className="relative">
               <Input 
                 type={showPassword ? "text" : "password"} 
+                name="password"
                 placeholder="Password" 
                 className="py-5"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
               />
               <Button 
+                type="button"
                 variant="ghost" 
                 size="icon" 
                 className="absolute right-2 top-1/2 -translate-y-1/2" 
@@ -77,22 +150,39 @@ const LoginPage = () => {
             
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Checkbox id="remember" />
-                <label htmlFor="remember" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                <Checkbox 
+                  id="rememberMe"
+                  name="rememberMe"
+                  checked={formData.rememberMe}
+                  onCheckedChange={(checked) => setFormData(prev => ({
+                    ...prev,
+                    rememberMe: !!checked
+                  }))}
+                />
+                <label 
+                  htmlFor="rememberMe" 
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
                   Remember me
                 </label>
               </div>
-              <a href="#" className="text-sm text-blue-600">Forgot Password?</a>
+              <a href="/forgot-password" className="text-sm text-blue-600">
+                Forgot Password?
+              </a>
             </div>
             
-            <Button className="w-full py-5 bg-blue-600 hover:bg-blue-700">
-              Log in
+            <Button 
+              type="submit" 
+              className="w-full py-5 bg-blue-600 hover:bg-blue-700"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Logging in...' : 'Log in'}
             </Button>
             
             <div className="text-center text-sm text-gray-500 mt-4">
               Don't have an account? <a href="/signup" className="text-blue-600 hover:underline">Create an account</a>
             </div>
-          </div>
+          </form>
         </div>
       </div>
 
@@ -167,7 +257,7 @@ const LoginPage = () => {
         
         <div className="flex justify-center mt-8 space-x-2">
           <div className="w-2 h-2 bg-white rounded-full"></div>
-          <div className="w-2 h-2 bg-blue-300 rounded-full"></div>
+          <div className="w-2 h-2 bg-blue-300  rounded-full"></div>
           <div className="w-2 h-2 bg-blue-300 rounded-full"></div>
         </div>
       </div>
