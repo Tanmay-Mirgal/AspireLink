@@ -21,7 +21,6 @@ export const register = async (req, res) => {
       },
       email,
       password: hashedPassword,
-      role: "student",
     });
 
     const savedUser = await newUser.save();
@@ -42,7 +41,6 @@ export const register = async (req, res) => {
         id: savedUser._id,
         fullName: savedUser.fullName,
         email: savedUser.email,
-        role: savedUser.role,
         profilePic: savedUser.profilePic,
       },
     });
