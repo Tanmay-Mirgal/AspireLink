@@ -67,11 +67,11 @@ const userSchema = new mongoose.Schema(
         type: Boolean,
         default: false,
       },
-      assignedMentor: {
+      assignedMentor: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         default: null,
-      },
+      }],
     },
     mentorSchema: [
       {

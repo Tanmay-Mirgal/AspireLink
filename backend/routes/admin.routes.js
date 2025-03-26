@@ -4,6 +4,7 @@ import {
   protectedRoute 
 } from "../middlewares/auth.middleware.js";
 import { 
+    approvedRegistration,
   assignMentor, 
   getAllMentors, 
   getAllStudents, 
@@ -21,5 +22,6 @@ router.get("/get-registration", getRegistration);
 router.post("/assign-mentor", assignMentor);
 router.get("/get-all-students", getAllStudents);
 router.get("/get-all-mentors", getAllMentors);
+router.get("/approved-students", approvedRegistration);
 
 export default router;
