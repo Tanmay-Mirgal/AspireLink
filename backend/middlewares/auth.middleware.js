@@ -36,3 +36,11 @@ export const mentorRole = (req,res,next) => {
         res.status(403).json({message: 'Not authorized as a mentor'});
     }
 }
+
+export const adminRole = (req,res,next)=>{
+    if(req.user.role === 'admin'){
+        next();
+    }else{
+        res.status(403).json({message: 'Not authorized as an admin'});
+    }
+}

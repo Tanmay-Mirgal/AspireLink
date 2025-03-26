@@ -26,14 +26,12 @@ export const register = async (req, res) => {
 
     const savedUser = await newUser.save();
 
-    const token = jwt.sign(
-      { id: savedUser._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "1d" }
-    );
+    const token = jwt.sign({ id: savedUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
       secure: process.env.NODE_ENV === "production" ? true : false,
     });
 
@@ -80,7 +78,7 @@ export const login = async (req, res) => {
     );
     res.cookie("token", token, {
       httpOnly: true,
-      sameSite: "strict",
+      sameSite: "lax",
       secure: process.env.NODE_ENV === "production" ? true : false,
     });
     res.status(200).json({
@@ -141,13 +139,8 @@ export const setRole = async (req, res) => {
 };
 export const logout = (req, res) => {
   try {
-    // Since JWT is stateless, we can't invalidate the token on the server
-    // But we can tell the client to remove the token
-
+    res.clearCookie("token");
     res.status(200).json({ message: "Logged out successfully" });
-
-    // Note: In a production app, you might want to implement token blacklisting
-    // or use refresh tokens for better security
   } catch (error) {
     console.error("Logout error:", error);
     res.status(500).json({ message: "Logout failed", error: error.message });
