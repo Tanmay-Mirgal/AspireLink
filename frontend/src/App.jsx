@@ -8,6 +8,8 @@ import Footer from './components/Footer/Footer';
 
 import Signup from "./pages/Signup/Signup"
 import Login from './pages/Login/Login';
+import StudentProfilePage from './pages/User/StudentProfilePage';
+import MentorProfile from './pages/Mentor/MentorProfile';
 
 
 
@@ -21,6 +23,8 @@ function App() {
 
       <Route path="/signup" element={<Signup/>} />
       <Route path="/login" element={<Login/>} />
+      <Route path='/studentprofile' element={<StudentProfilePage/>} />
+      <Route path='/mentorprofile' element={<MentorProfile/>} />
 
 
     </Routes>
