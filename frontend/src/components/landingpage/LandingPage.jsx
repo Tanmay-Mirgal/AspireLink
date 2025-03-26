@@ -2,7 +2,6 @@ import React from 'react';
 import { 
   ArrowRight, 
   Play, 
-  CheckCircle, 
   Users, 
   BookOpen, 
   Target, 
@@ -15,19 +14,34 @@ import {
 const LandingPage = () => {
   const features = [
     {
-      icon: <Users className="text-purple-500" size={32} />,
-      title: "Mentorship Network",
-      description: "Connect with industry experts and professional mentors"
+      icon: <Users className="text-purple-500" size={48} />,
+      title: "Resume Analyzer",
+      description: "Advanced AI-powered tool that provides comprehensive insights and optimization recommendations for your professional resume."
     },
     {
-      icon: <BookOpen className="text-purple-500" size={32} />,
-      title: "Skill Development",
-      description: "Personalized learning paths and skill assessments"
+      icon: <BookOpen className="text-green-500" size={48} />,
+      title: "Mock Interviews",
+      description: "Realistic interview simulations with AI feedback, helping you build confidence and improve your communication skills."
     },
     {
-      icon: <Target className="text-purple-500" size={32} />,
-      title: "Career Tracking",
-      description: "Monitor progress and set professional goals"
+      icon: <Target className="text-blue-500" size={48} />,
+      title: "Skill Matching",
+      description: "Intelligent algorithm that aligns your skills with industry demands and personalized career opportunities."
+    },
+    {
+      icon: <Briefcase className="text-orange-500" size={48} />,
+      title: "Career Tracker",
+      description: "Comprehensive dashboard to monitor your professional growth, set goals, and track your career progression."
+    },
+    {
+      icon: <MessageCircle className="text-teal-500" size={48} />,
+      title: "Mentorship",
+      description: "Connect with experienced professionals who provide personalized guidance and industry insights."
+    },
+    {
+      icon: <Rocket className="text-red-500" size={48} />,
+      title: "Job Opportunities",
+      description: "Curated job listings and networking connections tailored to your skills and career aspirations."
     }
   ];
 
@@ -99,20 +113,12 @@ const LandingPage = () => {
             <div className="bg-[#0F0F1A] rounded-2xl p-6 
               border border-gray-800/50 shadow-2xl overflow-hidden">
               <div className="grid grid-cols-3 gap-4 relative z-10">
-                {[
-                  'Resume\nAnalyzer', 
-                  'Mock\nInterviews', 
-                  'Skill\nMatching', 
-                  'Career\nTracker', 
-                  'Mentorship', 
-                  'Job\nOpportunities'
-                ].map((feature, index) => (
+                {[1,2,3,4,5,6].map((item) => (
                   <div 
-                    key={index} 
+                    key={item} 
                     className="bg-[#1A1A2E] h-24 rounded-lg 
-                    opacity-80 flex items-center justify-center text-center p-2"
+                    opacity-80 flex items-center justify-center"
                   >
-                    <span className="text-xs text-gray-300 whitespace-pre-line text-center">{feature}</span>
                   </div>
                 ))}
               </div>
@@ -121,21 +127,29 @@ const LandingPage = () => {
         </div>
       </div>
 
-      {/* Features Section */}
-      <div className="py-20 px-6 md:px-24 bg-[#0A0A0F]">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12">
-            Platform Features
-          </h2>
-          <div className="grid md:grid-cols-3 gap-8">
+      {/* Feature Details Section */}
+      <div className="py-24 px-6 md:px-24 bg-[#0A0A0F]">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-bold mb-6">
+              Comprehensive Career Development Platform
+            </h2>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+              Explore the powerful tools designed to transform your professional journey
+            </p>
+          </div>
+          
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <div 
                 key={index} 
-                className="bg-[#1A1A2E] p-6 rounded-lg hover:bg-[#2A2A3E] transition"
+                className="bg-[#1A1A2E] p-8 rounded-2xl 
+                  transform transition-all duration-300 
+                  hover:-translate-y-4 hover:shadow-2xl"
               >
-                <div className="mb-4">{feature.icon}</div>
-                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
+                <div className="mb-6">{feature.icon}</div>
+                <h3 className="text-2xl font-semibold mb-4">{feature.title}</h3>
+                <p className="text-gray-300">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -188,46 +202,6 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-black border-t border-gray-800 py-12 px-6 md:px-24">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-8">
-          <div>
-            <h3 className="font-bold text-xl mb-4">Platform</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>Features</li>
-              <li>Pricing</li>
-              <li>About Us</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-bold text-xl mb-4">Resources</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>Blog</li>
-              <li>Career Guide</li>
-              <li>Support</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-bold text-xl mb-4">Community</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>Mentors</li>
-              <li>Students</li>
-              <li>Companies</li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="font-bold text-xl mb-4">Contact</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>Email: support@platform.com</li>
-              <li>Phone: +1 (555) 123-4567</li>
-            </ul>
-          </div>
-        </div>
-        <div className="text-center mt-12 text-gray-500">
-          © 2025 Student-Industry Network Platform. All rights reserved.
-        </div>
-      </footer>
     </div>
   );
 };
