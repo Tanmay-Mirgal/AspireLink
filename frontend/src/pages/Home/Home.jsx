@@ -7,7 +7,7 @@ function Home() {
         <>
        
         <div className="flex">
-            <main className="ml-16 flex-grow">
+            <main className="flex-grow">
                 <LandingPage />
             </main>
         </div>
