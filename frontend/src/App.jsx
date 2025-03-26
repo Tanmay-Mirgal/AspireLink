@@ -1,0 +1,13 @@
+import React from 'react'
+import { Button } from '@/components/ui/button'
+
+function App() {
+  return (
+    <div>
+      Hello
+      <Button>Click me</Button>
+    </div>
+  )
+}
+
+export default App
