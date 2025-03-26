@@ -1,11 +1,63 @@
-import React from 'react';
+// src/pages/SignupPage.tsx
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 const SignupPage = () => {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    termsAccepted: false
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { signup } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Basic form validation
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
+      toast.error('Please fill in all fields');
+      return;
+    }
+
+    if (!formData.termsAccepted) {
+      toast.error('Please accept the Terms of Service and Privacy Policy');
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      const { firstName, lastName, email, password } = formData;
+      const user = await signup({ firstName, lastName, email, password });
+      
+      // Optional: Navigate to dashboard or profile page after signup
+      navigate('/role');
+    } catch (error) {
+      // Error handling is done in the signup function via toast
+      console.error('Signup error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="flex min-h-screen w-full">
@@ -50,20 +102,28 @@ const SignupPage = () => {
             <div className="h-px bg-gray-200 flex-1"></div>
           </div>
 
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Input 
                   type="text" 
+                  name="firstName"
                   placeholder="First Name" 
                   className="py-5"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
               <div>
                 <Input 
                   type="text" 
+                  name="lastName"
                   placeholder="Last Name" 
                   className="py-5"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  required
                 />
               </div>
             </div>
@@ -71,18 +131,27 @@ const SignupPage = () => {
             <div>
               <Input 
                 type="email" 
+                name="email"
                 placeholder="Email" 
                 className="py-5"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
               />
             </div>
             
             <div className="relative">
               <Input 
                 type={showPassword ? "text" : "password"} 
+                name="password"
                 placeholder="Password" 
                 className="py-5"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
               />
               <Button 
+                type="button"
                 variant="ghost" 
                 size="icon" 
                 className="absolute right-2 top-1/2 -translate-y-1/2" 
@@ -93,20 +162,32 @@ const SignupPage = () => {
             </div>
             
             <div className="flex items-center space-x-2">
-              <Checkbox id="terms" />
+              <Checkbox 
+                id="terms"
+                name="termsAccepted"
+                checked={formData.termsAccepted}
+                onCheckedChange={(checked) => setFormData(prev => ({
+                  ...prev,
+                  termsAccepted: !!checked
+                }))}
+              />
               <label htmlFor="terms" className="text-sm text-gray-600">
                 I agree to the <a href="#" className="text-blue-600 hover:underline">Terms of Service</a> and <a href="#" className="text-blue-600 hover:underline">Privacy Policy</a>
               </label>
             </div>
             
-            <Button className="w-full py-5 bg-blue-600 hover:bg-blue-700">
-              Create Account
+            <Button 
+              type="submit" 
+              className="w-full py-5 bg-blue-600 hover:bg-blue-700"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? 'Creating Account...' : 'Create Account'}
             </Button>
             
             <div className="text-center text-sm text-gray-500 mt-4">
               Already have an account? <a href="/login" className="text-blue-600 hover:underline">Log in</a>
             </div>
-          </div>
+          </form>
         </div>
       </div>
 
@@ -176,7 +257,7 @@ const SignupPage = () => {
         
         <div className="text-center text-white mt-8">
           <h2 className="text-2xl font-bold mb-3">Connect with every application.</h2>
-          <p className="text-blue-100">Everything you need in an easily customizable dashboard.</p>
+          <p className="text-blue-100">Everything you need in an easily customizable       dashboard.</p>
         </div>
         
         <div className="flex justify-center mt-8 space-x-2">

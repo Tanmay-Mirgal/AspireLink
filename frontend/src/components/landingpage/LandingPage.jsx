@@ -188,12 +188,12 @@ const LandingPage = () => {
             with our comprehensive platform.
           </p>
           <div className="flex justify-center space-x-4">
-            <button className="bg-purple-600 text-white 
+            <a href='/signup'><button className="bg-purple-600 text-white 
               px-8 py-4 rounded-lg flex items-center 
               hover:bg-purple-700 transition text-lg">
               Create Free Account
               <ArrowRight className="ml-2" size={24} />
-            </button>
+            </button></a>
             <button className="border border-gray-800 text-white
               px-8 py-4 rounded-lg flex items-center 
               hover:bg-gray-900 transition text-lg">

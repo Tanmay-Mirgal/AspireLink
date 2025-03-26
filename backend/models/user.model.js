@@ -23,17 +23,17 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "student",
-      enum: ["student", "mentor", "admin"],
+      // enum: ["student", "mentor", "admin"],
+      default: "",
     },
     profilePic: {
       type: String,
       default:
         "https://res.cloudinary.com/dmitriy-klimov/image/upload/v1631304716/default_profile_picture.png",
     },
-    bio:{
-        type: String,
-        default: "This user has not set a bio yet."
+    bio: {
+      type: String,
+      default: "This user has not set a bio yet.",
     },
     studentProfile: {
       skills: [
@@ -58,13 +58,23 @@ const userSchema = new mongoose.Schema(
           leetcode: {
             url: String,
           },
-          linkedIn:{
+          linkedIn: {
             url: String,
-          }
+          },
         },
       ],
+      isProfileComplete: {
+        type: Boolean,
+        default: false,
+      },
+      assignedMentor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
+      },
     },
-    mentorSchema:[{
+    mentorSchema: [
+      {
         companyName: String,
         description: String,
         qualifications: [String],
@@ -73,12 +83,14 @@ const userSchema = new mongoose.Schema(
         projects: [String],
         contact: String,
         portfolio: String,
-        studentAssigned:[{
+        studentAssigned: [
+          {
             type: mongoose.Schema.Types.ObjectId,
-            ref: "User"
-        }]
-       
-    }]
+            ref: "User",
+          },
+        ],
+      },
+    ],
   },
   {
     timestamps: true,
