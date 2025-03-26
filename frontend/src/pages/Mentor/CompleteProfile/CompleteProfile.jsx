@@ -83,8 +83,9 @@ const CompleteProfilePage = () => {
       // Complete profile
       await completeProfile(cleanedProfile);
       
-      // Navigate to appropriate dashboard
-      navigate(`/${user.role}-dashboard`);
+      
+      // navigate(`/${user.role}-dashboard`);
+      navigate("/")
     } catch (error) {
       console.error('Profile completion error:', error);
     }

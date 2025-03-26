@@ -16,7 +16,7 @@ const RoleSelectionPage = () => {
   useEffect(() => {
     if (user?.role) {
       // If user already has a role, redirect to appropriate dashboard
-      navigate(`/${user.role}-complete-profile`);
+      navigate(`/${selectedRole}-dashboard`);
     }
   }, [user, navigate]);
 
@@ -50,7 +50,7 @@ const RoleSelectionPage = () => {
       const updatedUser = await setRole(selectedRole);
       
       // Navigate based on selected role
-      navigate(`/${selectedRole}-dashboard`);
+      navigate(`/${user.role}-complete-profile`);
       
       toast.success(`Welcome as a ${selectedRole}!`);
     } catch (error) {

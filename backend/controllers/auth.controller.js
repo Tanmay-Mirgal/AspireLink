@@ -149,101 +149,120 @@ export const getProfile = async (req, res) => {
   }
 };
 export const completeProfile = async (req, res) => {
-  try {
-    // Get user ID from JWT token (set by auth middleware)
-    const userId = req.user.id;
-
-    // Find user by ID
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Update basic profile information if provided
-    const { firstName, lastName, bio, profilePic } = req.body;
-
-    if (firstName) user.fullName.firstName = firstName;
-    if (lastName) user.fullName.lastName = lastName;
-    if (bio) user.bio = bio;
-    if (profilePic) user.profilePic = profilePic;
-
-    // Handle role-specific profile updates
-    if (user.role === "student") {
-      const { skills, education, socialMedia } = req.body;
-
-      // Update student profile if data is provided
-      if (skills) user.studentProfile.skills = skills;
-      if (education) user.studentProfile.education = education;
-      if (socialMedia) {
-        user.studentProfile.socialMedia = [
-          {
-            github: { url: socialMedia.github },
-            leetcode: { url: socialMedia.leetcode },
-            linkedIn: { url: socialMedia.linkedIn },
-          },
-        ];
+    try {
+      // Get user ID from JWT token (set by auth middleware)
+      const userId = req.user.id;
+  
+      // Find user by ID
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
       }
-    }
-
-    if (user.role === "mentor") {
-      const {
-        companyName,
-        description,
-        qualifications,
-        experience,
-        skills,
-        projects,
-        contact,
-        portfolio,
-      } = req.body;
-
-      // Create or update mentor profile
-      const mentorProfile = {
-        companyName,
-        description,
-        qualifications,
-        experience,
-        skills,
-        projects,
-        contact,
-        portfolio,
+  
+      // Update basic profile information if provided
+      const { firstName, lastName, bio, profilePic } = req.body;
+  
+      if (firstName) user.fullName.firstName = firstName;
+      if (lastName) user.fullName.lastName = lastName;
+      if (bio) user.bio = bio;
+      if (profilePic) user.profilePic = profilePic;
+  
+      // Handle role-specific profile updates
+      if (user.role === "student") {
+        const { skills, education, socialMedia } = req.body;
+  
+        // Ensure studentProfile exists
+        if (!user.studentProfile) {
+          user.studentProfile = {};
+        }
+  
+        // Update student profile if data is provided
+        if (skills) user.studentProfile.skills = skills;
+        if (education) user.studentProfile.education = education;
+  
+        // Ensure socialMedia is properly formatted as an array
+        if (socialMedia) {
+          user.studentProfile.socialMedia = [
+            {
+              github: { url: socialMedia.github || "" },
+              leetcode: { url: socialMedia.leetcode || "" },
+              linkedIn: { url: socialMedia.linkedIn || "" },
+            },
+          ];
+        }
+  
+        // Mark profile as complete if both skills and education are provided
+        user.studentProfile.isProfileComplete = Boolean(
+          user.studentProfile.skills.length > 0 && user.studentProfile.education.length > 0
+        );
+      }
+  
+      if (user.role === "mentor") {
+        const {
+          companyName,
+          description,
+          qualifications,
+          experience,
+          skills,
+          projects,
+          contact,
+          portfolio,
+        } = req.body;
+  
+        // Ensure mentorSchema exists
+        if (!user.mentorSchema) {
+          user.mentorSchema = [];
+        }
+  
+        // Create or update mentor profile
+        const mentorProfile = {
+          companyName,
+          description,
+          qualifications,
+          experience,
+          skills,
+          projects,
+          contact,
+          portfolio,
+        };
+  
+        // If mentor profile already exists, update it; otherwise, create new
+        if (user.mentorSchema.length > 0) {
+          Object.assign(user.mentorSchema[0], mentorProfile);
+        } else {
+          user.mentorSchema = [mentorProfile];
+        }
+      }
+  
+      // Save updated user
+      await user.save();
+  
+      // Create response object
+      const responseUser = {
+        id: user._id,
+        firstName: user.fullName.firstName,
+        lastName: user.fullName.lastName,
+        email: user.email,
+        role: user.role,
+        profilePic: user.profilePic,
+        bio: user.bio,
       };
-
-      // If mentor profile already exists, update it; otherwise, create new
-      if (user.mentorSchema && user.mentorSchema.length > 0) {
-        Object.assign(user.mentorSchema[0], mentorProfile);
-      } else {
-        user.mentorSchema = [mentorProfile];
+  
+      if (user.role === "student") {
+        responseUser.studentProfile = user.studentProfile;
+      } else if (user.role === "mentor") {
+        responseUser.mentorProfile = user.mentorSchema[0];
       }
+  
+      res.status(200).json({
+        message: "Profile updated successfully",
+        user: responseUser,
+      });
+    } catch (error) {
+      console.error("Complete profile error:", error);
+      res
+        .status(500)
+        .json({ message: "Failed to update profile", error: error.message });
     }
-
-    // Save updated user
-    await user.save();
-
-    const responseUser = {
-      id: user._id,
-      firstName: user.fullName.firstName,
-      lastName: user.fullName.lastName,
-      email: user.email,
-      role: user.role,
-      profilePic: user.profilePic,
-      bio: user.bio,
-    };
-
-    if (user.role === "student") {
-      responseUser.studentProfile = user.studentProfile;
-    } else if (user.role === "mentor") {
-      responseUser.mentorProfile = user.mentorSchema[0];
-    }
-
-    res.status(200).json({
-      message: "Profile updated successfully",
-      user: responseUser,
-    });
-  } catch (error) {
-    console.error("Complete profile error:", error);
-    res
-      .status(500)
-      .json({ message: "Failed to update profile", error: error.message });
-  }
-};
+  };
+  

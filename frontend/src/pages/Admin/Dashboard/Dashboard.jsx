@@ -1,432 +1,905 @@
-import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { Plus, Search, Check, X, UserPlus, Users, Clock, CheckSquare, UserCheck } from 'lucide-react';
+"use client"
 
-// Header Component
-const Header = () => {
-  return (
-    <header className="flex justify-between items-center mb-6">
-      <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-      <div className="flex items-center gap-4">
-        <div className="relative">
-          <input 
-            type="text" 
-            placeholder="Search..." 
-            className="bg-gray-700 text-white rounded-md px-4 py-2 pl-10 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
-        </div>
-        <div className="bg-gray-800 rounded-full h-10 w-10 flex items-center justify-center">
-          <span className="font-medium">A</span>
-        </div>
-      </div>
-    </header>
-  );
-};
+import { useState } from "react"
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts"
+import { Users, UserCheck, Clock, Search, UserPlus, CheckCircle, BarChart3 } from "lucide-react"
 
-// Sidebar Component
-const Sidebar = ({ activeView, setActiveView }) => {
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: <Users size={18} /> },
-    { id: 'students', label: 'Students', icon: <Users size={18} /> },
-    { id: 'mentors', label: 'Mentors', icon: <UserCheck size={18} /> },
-    { id: 'pending', label: 'Pending Registrations', icon: <Clock size={18} /> },
-    { id: 'approved', label: 'Approved Registrations', icon: <CheckSquare size={18} /> },
-    { id: 'assign', label: 'Assign Mentor', icon: <UserPlus size={18} /> },
-  ];
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Badge } from "@/components/ui/badge"
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
-  return (
-    <div className="w-64 bg-gray-800 border-r border-gray-700 p-4">
-      <div className="mb-6">
-        <h2 className="text-xl font-bold mb-4">Admin Panel</h2>
-      </div>
-      <nav>
-        <ul className="space-y-2">
-          {navItems.map((item) => (
-            <li key={item.id}>
-              <button
-                onClick={() => setActiveView(item.id)}
-                className={`w-full flex items-center p-3 rounded-md transition-colors ${
-                  activeView === item.id
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-300 hover:bg-gray-700'
-                }`}
-              >
-                <span className="mr-3">{item.icon}</span>
-                {item.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </div>
-  );
-};
+// Sample data for charts and tables
+const chartData = [
+  { name: "Jan", students: 40, mentors: 24, connections: 18 },
+  { name: "Feb", students: 30, mentors: 28, connections: 22 },
+  { name: "Mar", students: 60, mentors: 32, connections: 30 },
+  { name: "Apr", students: 50, mentors: 35, connections: 25 },
+  { name: "May", students: 70, mentors: 40, connections: 35 },
+  { name: "Jun", students: 85, mentors: 45, connections: 40 },
+]
 
-// Stats Cards Component
-const StatsCards = ({ stats }) => {
-  return (
-    <div className="grid grid-cols-3 gap-4 mb-4">
-      <div className="border border-gray-700 rounded-md p-4 flex flex-col justify-center items-center bg-gray-800">
-        <h2 className="text-lg text-gray-300">Total Students</h2>
-        <p className="text-2xl font-bold mt-2">{stats.totalStudents}</p>
-      </div>
-      <div className="border border-gray-700 rounded-md p-4 flex flex-col justify-center items-center bg-gray-800">
-        <h2 className="text-lg text-gray-300">Total Mentor</h2>
-        <p className="text-2xl font-bold mt-2">{stats.totalMentors}</p>
-      </div>
-      <div className="border border-gray-700 rounded-md p-4 flex flex-col justify-center items-center bg-gray-800 relative">
-        <div className="absolute top-2 right-2">
-          <button className="bg-gray-700 hover:bg-gray-600 rounded-full p-1 transition-colors">
-            <Plus size={16} />
-          </button>
-        </div>
-        <h2 className="text-lg text-gray-300">No of pending registrations</h2>
-        <p className="text-2xl font-bold mt-2">{stats.pendingRegistrations}</p>
-      </div>
-    </div>
-  );
-};
+const students = [
+  {
+    id: 1,
+    name: "Alex Johnson",
+    email: "alex@example.com",
+    skills: ["JavaScript", "React", "Node.js"],
+    status: "Active",
+  },
+  {
+    id: 2,
+    name: "Sarah Williams",
+    email: "sarah@example.com",
+    skills: ["Python", "Data Science", "Machine Learning"],
+    status: "Active",
+  },
+  {
+    id: 3,
+    name: "Michael Brown",
+    email: "michael@example.com",
+    skills: ["Java", "Spring", "Hibernate"],
+    status: "Active",
+  },
+  { id: 4, name: "Emily Davis", email: "emily@example.com", skills: ["UX/UI", "Figma", "Adobe XD"], status: "Active" },
+  {
+    id: 5,
+    name: "David Wilson",
+    email: "david@example.com",
+    skills: ["C++", "Algorithms", "Data Structures"],
+    status: "Active",
+  },
+]
 
-// Chart Component
-const Chart = ({ data }) => {
-  return (
-    <div className="border border-gray-700 rounded-md p-4 bg-gray-800 h-64 mb-4">
-      <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-          <XAxis dataKey="name" stroke="#888" />
-          <YAxis stroke="#888" />
-          <Tooltip 
-            contentStyle={{ backgroundColor: '#333', borderColor: '#555' }}
-            labelStyle={{ color: '#eee' }}
-          />
-          <Bar dataKey="students" fill="#3B82F6" name="Students" />
-          <Bar dataKey="mentors" fill="#10B981" name="Mentors" />
-        </BarChart>
-      </ResponsiveContainer>
-    </div>
-  );
-};
+const mentors = [
+  {
+    id: 1,
+    name: "Dr. Robert Chen",
+    email: "robert@example.com",
+    skills: ["JavaScript", "React", "Node.js"],
+    students: 3,
+    status: "Active",
+  },
+  {
+    id: 2,
+    name: "Prof. Lisa Taylor",
+    email: "lisa@example.com",
+    skills: ["Python", "Data Science", "Machine Learning"],
+    students: 5,
+    status: "Active",
+  },
+  {
+    id: 3,
+    name: "James Anderson",
+    email: "james@example.com",
+    skills: ["Java", "Spring", "Hibernate"],
+    students: 2,
+    status: "Active",
+  },
+  {
+    id: 4,
+    name: "Dr. Sophia Martinez",
+    email: "sophia@example.com",
+    skills: ["UX/UI", "Figma", "Adobe XD"],
+    students: 4,
+    status: "Active",
+  },
+  {
+    id: 5,
+    name: "Prof. Thomas Clark",
+    email: "thomas@example.com",
+    skills: ["C++", "Algorithms", "Data Structures"],
+    students: 3,
+    status: "Active",
+  },
+]
 
-// Search Bar Component
-const SearchBar = ({ placeholder }) => {
-  return (
-    <div className="relative">
-      <input 
-        type="text" 
-        placeholder={placeholder || "Search..."} 
-        className="bg-gray-700 text-white rounded-md px-4 py-2 pl-10 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-      <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
-    </div>
-  );
-};
+const pendingRegistrations = [
+  {
+    id: 1,
+    name: "Kevin Lee",
+    email: "kevin@example.com",
+    type: "Student",
+    skills: ["Python", "Django", "Flask"],
+    date: "2025-03-25",
+  },
+  {
+    id: 2,
+    name: "Rachel Green",
+    email: "rachel@example.com",
+    type: "Mentor",
+    skills: ["JavaScript", "Vue.js", "Express"],
+    date: "2025-03-26",
+  },
+  {
+    id: 3,
+    name: "Daniel Smith",
+    email: "daniel@example.com",
+    type: "Student",
+    skills: ["Ruby", "Rails", "PostgreSQL"],
+    date: "2025-03-26",
+  },
+]
 
+const approvedRegistrations = [
+  {
+    id: 1,
+    name: "Olivia Johnson",
+    email: "olivia@example.com",
+    type: "Student",
+    skills: ["HTML", "CSS", "JavaScript"],
+    date: "2025-03-20",
+  },
+  {
+    id: 2,
+    name: "William Brown",
+    email: "william@example.com",
+    type: "Mentor",
+    skills: ["React", "Redux", "TypeScript"],
+    date: "2025-03-21",
+  },
+  {
+    id: 3,
+    name: "Emma Davis",
+    email: "emma@example.com",
+    type: "Student",
+    skills: ["PHP", "Laravel", "MySQL"],
+    date: "2025-03-22",
+  },
+  {
+    id: 4,
+    name: "Noah Wilson",
+    email: "noah@example.com",
+    type: "Mentor",
+    skills: ["Python", "TensorFlow", "Keras"],
+    date: "2025-03-23",
+  },
+]
 
-// Dashboard View Component
-const DashboardView = ({ stats, chartData }) => {
-  return (
-    <div className="flex flex-col gap-4">
-      <StatsCards stats={stats} />
-      <Chart data={chartData} />
-    </div>
-  );
-};
+export default function AdminDashboard() {
+  const [activeTab, setActiveTab] = useState("dashboard")
+  const [selectedStudent, setSelectedStudent] = useState(null)
+  const [selectedMentor, setSelectedMentor] = useState(null)
+  const [searchStudents, setSearchStudents] = useState("")
+  const [searchMentors, setSearchMentors] = useState("")
 
-// Main AdminDashboard Component
-const AdminDashboard = () => {
-  // Sample data for the dashboard
-  const [stats, setStats] = useState({
-    totalStudents: 120,
-    totalMentors: 25,
-    pendingRegistrations: 8
-  });
+  const filteredStudents = students.filter(
+    (student) =>
+      student.name.toLowerCase().includes(searchStudents.toLowerCase()) ||
+      student.email.toLowerCase().includes(searchStudents.toLowerCase()) ||
+      student.skills.some((skill) => skill.toLowerCase().includes(searchStudents.toLowerCase())),
+  )
 
-  const [chartData, setChartData] = useState([
-    { name: 'Jan', students: 65, mentors: 12 },
-    { name: 'Feb', students: 80, mentors: 14 },
-    { name: 'Mar', students: 95, mentors: 18 },
-    { name: 'Apr', students: 110, mentors: 22 },
-    { name: 'May', students: 120, mentors: 25 }
-  ]);
+  const filteredMentors = mentors.filter(
+    (mentor) =>
+      mentor.name.toLowerCase().includes(searchMentors.toLowerCase()) ||
+      mentor.email.toLowerCase().includes(searchMentors.toLowerCase()) ||
+      mentor.skills.some((skill) => skill.toLowerCase().includes(searchMentors.toLowerCase())),
+  )
 
-  // Sample data for tables
-  const [students, setStudents] = useState([
-    { id: 1, name: 'Alex Johnson', email: 'alex@example.com', course: 'Computer Science', joinDate: '2024-01-15' },
-    { id: 2, name: 'Samantha Lee', email: 'samantha@example.com', course: 'Data Science', joinDate: '2024-02-03' },
-    { id: 3, name: 'Michael Chen', email: 'michael@example.com', course: 'Web Development', joinDate: '2024-02-15' },
-    { id: 4, name: 'Jessica Wang', email: 'jessica@example.com', course: 'UX Design', joinDate: '2024-03-01' },
-    { id: 5, name: 'David Smith', email: 'david@example.com', course: 'AI & Machine Learning', joinDate: '2024-03-10' }
-  ]);
+  const matchedMentors = selectedStudent
+    ? mentors.filter((mentor) => mentor.skills.some((skill) => selectedStudent.skills.includes(skill)))
+    : []
 
-  const [mentors, setMentors] = useState([
-    { id: 1, name: 'Dr. Robert Miller', email: 'robert@example.com', expertise: 'Machine Learning', students: 12 },
-    { id: 2, name: 'Prof. Sarah Johnson', email: 'sarah@example.com', expertise: 'Web Development', students: 15 },
-    { id: 3, name: 'Dr. James Wilson', email: 'james@example.com', expertise: 'Data Science', students: 10 },
-    { id: 4, name: 'Prof. Linda Garcia', email: 'linda@example.com', expertise: 'UX/UI Design', students: 8 }
-  ]);
+  const matchedStudents = selectedMentor
+    ? students.filter((student) => student.skills.some((skill) => selectedMentor.skills.includes(skill)))
+    : []
 
-  const [pendingRegistrations, setPendingRegistrations] = useState([
-    { id: 1, name: 'Thomas Brown', email: 'thomas@example.com', course: 'AI & Machine Learning', date: '2024-03-18' },
-    { id: 2, name: 'Emily Davis', email: 'emily@example.com', course: 'Data Science', date: '2024-03-19' },
-    { id: 3, name: 'Ryan Wilson', email: 'ryan@example.com', course: 'Cybersecurity', date: '2024-03-20' },
-    { id: 4, name: 'Olivia Martinez', email: 'olivia@example.com', course: 'Web Development', date: '2024-03-21' }
-  ]);
-
-  const [approvedRegistrations, setApprovedRegistrations] = useState([
-    { id: 1, name: 'Kevin Thompson', email: 'kevin@example.com', course: 'Computer Science', date: '2024-03-15', mentor: 'Dr. Robert Miller' },
-    { id: 2, name: 'Lisa Anderson', email: 'lisa@example.com', course: 'UX Design', date: '2024-03-16', mentor: 'Prof. Linda Garcia' },
-    { id: 3, name: 'Brian Taylor', email: 'brian@example.com', course: 'Data Science', date: '2024-03-17', mentor: 'Dr. James Wilson' }
-  ]);
-
-  // State for active view
-  const [activeView, setActiveView] = useState('dashboard');
-
-  // Handle approval and rejection
-  const handleApprove = (id) => {
-    const registration = pendingRegistrations.find(reg => reg.id === id);
-    if (registration) {
-      // Add to approved registrations
-      setApprovedRegistrations([
-        ...approvedRegistrations, 
-        { ...registration, mentor: 'Unassigned' }
-      ]);
-      
-      // Remove from pending
-      setPendingRegistrations(pendingRegistrations.filter(reg => reg.id !== id));
-      
-      // Update stats
-      setStats({
-        ...stats,
-        totalStudents: stats.totalStudents + 1,
-        pendingRegistrations: stats.pendingRegistrations - 1
-      });
+  const handleAssignMentor = () => {
+    if (selectedStudent && selectedMentor) {
+      alert(`Assigned mentor ${selectedMentor.name} to student ${selectedStudent.name}`)
+      // In a real app, you would make an API call here
+      setSelectedStudent(null)
+      setSelectedMentor(null)
     }
-  };
-
-  const handleReject = (id) => {
-    // Remove from pending
-    setPendingRegistrations(pendingRegistrations.filter(reg => reg.id !== id));
-    
-    // Update stats
-    setStats({
-      ...stats,
-      pendingRegistrations: stats.pendingRegistrations - 1
-    });
-  };
-
-  // Render different views based on activeView state
-  const renderView = () => {
-    switch (activeView) {
-      case 'students':
-        return <StudentsTable students={students} />;
-      
-      case 'mentors':
-        return <MentorsTable mentors={mentors} />;
-      
-      case 'pending':
-        return <PendingRegistrationsTable 
-                 registrations={pendingRegistrations} 
-                 onApprove={handleApprove} 
-                 onReject={handleReject} 
-               />;
-      
-      case 'approved':
-        return <ApprovedRegistrationsTable registrations={approvedRegistrations} />;
-      
-      case 'assign':
-        return <AssignMentorTable registrations={approvedRegistrations} mentors={mentors} />;
-      
-      case 'dashboard':
-      default:
-        return <DashboardView stats={stats} chartData={chartData} />;
-    }
-  };
+  }
 
   return (
-    <div className="flex flex-col bg-gray-900 text-white min-h-screen">
-      <div className="flex h-screen">
-        <Sidebar activeView={activeView} setActiveView={setActiveView} />
-        <div className="flex-1 p-6 overflow-auto">
-          <Header />
-          <main>
-            {renderView()}
+    <SidebarProvider>
+      <div className="flex min-h-screen bg-background">
+        <Sidebar className="border-r">
+          <SidebarHeader className="flex items-center px-4 py-2">
+            <div className="flex items-center gap-2">
+              <div className="rounded-full bg-primary p-1">
+                <UserCheck className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <h1 className="text-lg font-semibold">MentorConnect</h1>
+            </div>
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => setActiveTab("dashboard")} isActive={activeTab === "dashboard"}>
+                  <BarChart3 className="h-4 w-4" />
+                  <span>Dashboard</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => setActiveTab("students")} isActive={activeTab === "students"}>
+                  <Users className="h-4 w-4" />
+                  <span>Students</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => setActiveTab("mentors")} isActive={activeTab === "mentors"}>
+                  <UserCheck className="h-4 w-4" />
+                  <span>Mentors</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => setActiveTab("pending")} isActive={activeTab === "pending"}>
+                  <Clock className="h-4 w-4" />
+                  <span>Pending Registrations</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => setActiveTab("approved")} isActive={activeTab === "approved"}>
+                  <CheckCircle className="h-4 w-4" />
+                  <span>Approved Registrations</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton onClick={() => setActiveTab("assign")} isActive={activeTab === "assign"}>
+                  <UserPlus className="h-4 w-4" />
+                  <span>Assign Mentor</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarContent>
+          <SidebarFooter className="border-t p-4">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
+                <span className="text-primary-foreground font-medium">A</span>
+              </div>
+              <div>
+                <p className="text-sm font-medium">Admin User</p>
+                <p className="text-xs text-muted-foreground">admin@mentorconnect.com</p>
+              </div>
+            </div>
+          </SidebarFooter>
+        </Sidebar>
+        <div className="flex-1 overflow-auto">
+          <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-6">
+            <SidebarTrigger />
+            <div className="flex-1">
+              <h1 className="text-lg font-semibold">
+                {activeTab === "dashboard" && "Dashboard"}
+                {activeTab === "students" && "Students"}
+                {activeTab === "mentors" && "Mentors"}
+                {activeTab === "pending" && "Pending Registrations"}
+                {activeTab === "approved" && "Approved Registrations"}
+                {activeTab === "assign" && "Assign Mentor"}
+              </h1>
+            </div>
+            <div className="flex items-center gap-4">
+              <Button variant="outline" size="sm">
+                <Bell className="h-4 w-4 mr-2" />
+                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">Notifications</span>
+              </Button>
+            </div>
+          </header>
+          <main className="grid gap-6 p-6">
+            {activeTab === "dashboard" && (
+              <>
+                <div className="grid gap-6 md:grid-cols-3">
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Students</CardTitle>
+                      <Users className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{students.length}</div>
+                      <p className="text-xs text-muted-foreground">+12% from last month</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Total Mentors</CardTitle>
+                      <UserCheck className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{mentors.length}</div>
+                      <p className="text-xs text-muted-foreground">+8% from last month</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">Pending Registrations</CardTitle>
+                      <Clock className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{pendingRegistrations.length}</div>
+                      <p className="text-xs text-muted-foreground">+2 new since yesterday</p>
+                    </CardContent>
+                  </Card>
+                </div>
+                <Card className="col-span-3">
+                  <CardHeader>
+                    <CardTitle>Network Growth</CardTitle>
+                    <CardDescription>Monthly growth of students, mentors, and connections</CardDescription>
+                  </CardHeader>
+                  <CardContent className="pl-2">
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={chartData}
+                          margin={{
+                            top: 5,
+                            right: 30,
+                            left: 20,
+                            bottom: 5,
+                          }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Bar dataKey="students" fill="#8884d8" name="Students" />
+                          <Bar dataKey="mentors" fill="#82ca9d" name="Mentors" />
+                          <Bar dataKey="connections" fill="#ffc658" name="Connections" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Students</CardTitle>
+                      <CardDescription>Latest student registrations</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Skills</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {students.slice(0, 3).map((student) => (
+                            <TableRow key={student.id}>
+                              <TableCell className="font-medium">{student.name}</TableCell>
+                              <TableCell>
+                                <div className="flex flex-wrap gap-1">
+                                  {student.skills.map((skill) => (
+                                    <Badge key={skill} variant="outline">
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Mentors</CardTitle>
+                      <CardDescription>Latest mentor registrations</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Skills</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {mentors.slice(0, 3).map((mentor) => (
+                            <TableRow key={mentor.id}>
+                              <TableCell className="font-medium">{mentor.name}</TableCell>
+                              <TableCell>
+                                <div className="flex flex-wrap gap-1">
+                                  {mentor.skills.map((skill) => (
+                                    <Badge key={skill} variant="outline">
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </CardContent>
+                  </Card>
+                </div>
+              </>
+            )}
+
+            {activeTab === "students" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Students</CardTitle>
+                  <CardDescription>Manage all registered students</CardDescription>
+                  <div className="flex w-full max-w-sm items-center space-x-2">
+                    <Input
+                      placeholder="Search students..."
+                      value={searchStudents}
+                      onChange={(e) => setSearchStudents(e.target.value)}
+                    />
+                    <Button type="submit" size="sm" variant="secondary">
+                      <Search className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>ID</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Skills</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredStudents.map((student) => (
+                        <TableRow key={student.id}>
+                          <TableCell>{student.id}</TableCell>
+                          <TableCell className="font-medium">{student.name}</TableCell>
+                          <TableCell>{student.email}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-1">
+                              {student.skills.map((skill) => (
+                                <Badge key={skill} variant="outline">
+                                  {skill}
+                                </Badge>
+                              ))}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              {student.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm">
+                              View
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === "mentors" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Mentors</CardTitle>
+                  <CardDescription>Manage all registered mentors</CardDescription>
+                  <div className="flex w-full max-w-sm items-center space-x-2">
+                    <Input
+                      placeholder="Search mentors..."
+                      value={searchMentors}
+                      onChange={(e) => setSearchMentors(e.target.value)}
+                    />
+                    <Button type="submit" size="sm" variant="secondary">
+                      <Search className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>ID</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Skills</TableHead>
+                        <TableHead>Students</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {filteredMentors.map((mentor) => (
+                        <TableRow key={mentor.id}>
+                          <TableCell>{mentor.id}</TableCell>
+                          <TableCell className="font-medium">{mentor.name}</TableCell>
+                          <TableCell>{mentor.email}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-1">
+                              {mentor.skills.map((skill) => (
+                                <Badge key={skill} variant="outline">
+                                  {skill}
+                                </Badge>
+                              ))}
+                            </div>
+                          </TableCell>
+                          <TableCell>{mentor.students}</TableCell>
+                          <TableCell>
+                            <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                              {mentor.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Button variant="ghost" size="sm">
+                              View
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === "pending" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Pending Registrations</CardTitle>
+                  <CardDescription>Review and approve new registration requests</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>ID</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Skills</TableHead>
+                        <TableHead>Date</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pendingRegistrations.map((registration) => (
+                        <TableRow key={registration.id}>
+                          <TableCell>{registration.id}</TableCell>
+                          <TableCell className="font-medium">{registration.name}</TableCell>
+                          <TableCell>{registration.email}</TableCell>
+                          <TableCell>{registration.type}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-1">
+                              {registration.skills.map((skill) => (
+                                <Badge key={skill} variant="outline">
+                                  {skill}
+                                </Badge>
+                              ))}
+                            </div>
+                          </TableCell>
+                          <TableCell>{registration.date}</TableCell>
+                          <TableCell>
+                            <div className="flex space-x-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 border-green-500 text-green-500 hover:bg-green-50"
+                              >
+                                Approve
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-8 border-red-500 text-red-500 hover:bg-red-50"
+                              >
+                                Reject
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === "approved" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Approved Registrations</CardTitle>
+                  <CardDescription>Recently approved registrations</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>ID</TableHead>
+                        <TableHead>Name</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Type</TableHead>
+                        <TableHead>Skills</TableHead>
+                        <TableHead>Date</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {approvedRegistrations.map((registration) => (
+                        <TableRow key={registration.id}>
+                          <TableCell>{registration.id}</TableCell>
+                          <TableCell className="font-medium">{registration.name}</TableCell>
+                          <TableCell>{registration.email}</TableCell>
+                          <TableCell>{registration.type}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-wrap gap-1">
+                              {registration.skills.map((skill) => (
+                                <Badge key={skill} variant="outline">
+                                  {skill}
+                                </Badge>
+                              ))}
+                            </div>
+                          </TableCell>
+                          <TableCell>{registration.date}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === "assign" && (
+              <div className="grid gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Assign Mentor to Student</CardTitle>
+                    <CardDescription>Match students with mentors based on skills</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <div className="space-y-4">
+                        <div>
+                          <h3 className="text-lg font-medium">Select Student</h3>
+                          <p className="text-sm text-muted-foreground">Choose a student to assign a mentor</p>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex w-full items-center space-x-2">
+                            <Input
+                              placeholder="Search students..."
+                              value={searchStudents}
+                              onChange={(e) => setSearchStudents(e.target.value)}
+                            />
+                          </div>
+                          <div className="rounded-md border">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Name</TableHead>
+                                  <TableHead>Skills</TableHead>
+                                  <TableHead>Action</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {filteredStudents.map((student) => (
+                                  <TableRow
+                                    key={student.id}
+                                    className={selectedStudent?.id === student.id ? "bg-muted/50" : ""}
+                                  >
+                                    <TableCell className="font-medium">{student.name}</TableCell>
+                                    <TableCell>
+                                      <div className="flex flex-wrap gap-1">
+                                        {student.skills.map((skill) => (
+                                          <Badge key={skill} variant="outline">
+                                            {skill}
+                                          </Badge>
+                                        ))}
+                                      </div>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Button
+                                        variant={selectedStudent?.id === student.id ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => setSelectedStudent(student)}
+                                      >
+                                        {selectedStudent?.id === student.id ? "Selected" : "Select"}
+                                      </Button>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <h3 className="text-lg font-medium">Select Mentor</h3>
+                          <p className="text-sm text-muted-foreground">Choose a mentor with matching skills</p>
+                        </div>
+                        <div className="space-y-2">
+                          <div className="flex w-full items-center space-x-2">
+                            <Input
+                              placeholder="Search mentors..."
+                              value={searchMentors}
+                              onChange={(e) => setSearchMentors(e.target.value)}
+                            />
+                          </div>
+                          <div className="rounded-md border">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead>Name</TableHead>
+                                  <TableHead>Skills</TableHead>
+                                  <TableHead>Action</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {(selectedStudent ? matchedMentors : filteredMentors).map((mentor) => (
+                                  <TableRow
+                                    key={mentor.id}
+                                    className={selectedMentor?.id === mentor.id ? "bg-muted/50" : ""}
+                                  >
+                                    <TableCell className="font-medium">{mentor.name}</TableCell>
+                                    <TableCell>
+                                      <div className="flex flex-wrap gap-1">
+                                {mentor.skills.map((skill) => (
+                                  <Badge
+                                    key={skill}
+                                    variant="outline"
+                                    className={
+                                      selectedStudent?.skills.includes(skill)
+                                        ? "bg-green-50 text-green-700 border-green-200"
+                                        : ""
+                                    }
+                                  >
+                                    {skill}
+                                  </Badge>
+                                ))}
+                                      </div>
+                                    </TableCell>
+                                    <TableCell>
+                                      <Button
+                                        variant={selectedMentor?.id === mentor.id ? "default" : "outline"}
+                                        size="sm"
+                                        onClick={() => setSelectedMentor(mentor)}
+                                      >
+                                        {selectedMentor?.id === mentor.id ? "Selected" : "Select"}
+                                      </Button>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setSelectedStudent(null)
+                        setSelectedMentor(null)
+                      }}
+                    >
+                      Reset
+                    </Button>
+                    <Button onClick={handleAssignMentor} disabled={!selectedStudent || !selectedMentor}>
+                      Assign Mentor
+                    </Button>
+                  </CardFooter>
+                </Card>
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Assignment Details</CardTitle>
+                    <CardDescription>Review the selected student and mentor match</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    {selectedStudent && selectedMentor ? (
+                      <div className="grid gap-6 md:grid-cols-2">
+                        <div className="space-y-4">
+                          <h3 className="font-medium">Student Information</h3>
+                          <div className="rounded-md border p-4">
+                            <div className="space-y-2">
+                              <div className="flex justify-between">
+                                <span className="text-sm font-medium">Name:</span>
+                                <span className="text-sm">{selectedStudent.name}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-sm font-medium">Email:</span>
+                                <span className="text-sm">{selectedStudent.email}</span>
+                              </div>
+                              <div>
+                                <span className="text-sm font-medium">Skills:</span>
+                                <div className="mt-1 flex flex-wrap gap-1">
+                                  {selectedStudent.skills.map((skill) => (
+                                    <Badge key={skill} variant="outline">
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-y-4">
+                          <h3 className="font-medium">Mentor Information</h3>
+                          <div className="rounded-md border p-4">
+                            <div className="space-y-2">
+                              <div className="flex justify-between">
+                                <span className="text-sm font-medium">Name:</span>
+                                <span className="text-sm">{selectedMentor.name}</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-sm font-medium">Email:</span>
+                                <span className="text-sm">{selectedMentor.email}</span>
+                              </div>
+                              <div>
+                                <span className="text-sm font-medium">Skills:</span>
+                                <div className="mt-1 flex flex-wrap gap-1">
+                                  {selectedMentor.skills.map((skill) => (
+                                    <Badge
+                                      key={skill}
+                                      variant="outline"
+                                      className={
+                                        selectedStudent.skills.includes(skill)
+                                          ? "bg-green-50 text-green-700 border-green-200"
+                                          : ""
+                                      }
+                                    >
+                                      {skill}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex h-[200px] items-center justify-center rounded-md border border-dashed">
+                        <div className="text-center">
+                          <h3 className="text-lg font-medium">No Selection</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Please select both a student and a mentor to see matching details
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </main>
         </div>
       </div>
-    </div>
-  );
-};
+    </SidebarProvider>
+  )
+}
 
-// Mentors Table Component
-const MentorsTable = ({ mentors }) => {
+// Missing Bell icon component
+function Bell(props) {
   return (
-    <div className="bg-gray-800 rounded-md p-6 border border-gray-700">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">Mentor Directory</h2>
-        <SearchBar placeholder="Search mentors..." />
-      </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-900 rounded-md overflow-hidden">
-          <thead>
-            <tr className="bg-gray-700">
-              <th className="py-3 px-4 text-left">ID</th>
-              <th className="py-3 px-4 text-left">Name</th>
-              <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">Expertise</th>
-              <th className="py-3 px-4 text-left">Students</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mentors.map((mentor) => (
-              <tr key={mentor.id} className="border-t border-gray-800 hover:bg-gray-800">
-                <td className="py-3 px-4">{mentor.id}</td>
-                <td className="py-3 px-4">{mentor.name}</td>
-                <td className="py-3 px-4">{mentor.email}</td>
-                <td className="py-3 px-4">{mentor.expertise}</td>
-                <td className="py-3 px-4">{mentor.students}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+      <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+    </svg>
+  )
+}
 
-// Fix for StudentsTable Component - there was an issue with the table headers
-const StudentsTable = ({ students }) => {
-  return (
-    <div className="bg-gray-800 rounded-md p-6 border border-gray-700">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">Student Directory</h2>
-        <SearchBar placeholder="Search students..." />
-      </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-900 rounded-md overflow-hidden">
-          <thead>
-            <tr className="bg-gray-700">
-              <th className="py-3 px-4 text-left">ID</th>
-              <th className="py-3 px-4 text-left">Name</th>
-              <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">Course</th>
-              <th className="py-3 px-4 text-left">Join Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((student) => (
-              <tr key={student.id} className="border-t border-gray-800 hover:bg-gray-800">
-                <td className="py-3 px-4">{student.id}</td>
-                <td className="py-3 px-4">{student.name}</td>
-                <td className="py-3 px-4">{student.email}</td>
-                <td className="py-3 px-4">{student.course}</td>
-                <td className="py-3 px-4">{student.joinDate}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
-
-// Fix for PendingRegistrationsTable Component - there was an issue with the table rows
-const PendingRegistrationsTable = ({ registrations, onApprove, onReject }) => {
-  return (
-    <div className="bg-gray-800 rounded-md p-6 border border-gray-700">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">Pending Registrations</h2>
-        <SearchBar placeholder="Search pending..." />
-      </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-900 rounded-md overflow-hidden">
-          <thead>
-            <tr className="bg-gray-700">
-              <th className="py-3 px-4 text-left">ID</th>
-              <th className="py-3 px-4 text-left">Name</th>
-              <th className="py-3 px-4 text-left">Email</th>
-              <th className="py-3 px-4 text-left">Course</th>
-              <th className="py-3 px-4 text-left">Date</th>
-              <th className="py-3 px-4 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {registrations.map((registration) => (
-              <tr key={registration.id} className="border-t border-gray-800 hover:bg-gray-800">
-                <td className="py-3 px-4">{registration.id}</td>
-                <td className="py-3 px-4">{registration.name}</td>
-                <td className="py-3 px-4">{registration.email}</td>
-                <td className="py-3 px-4">{registration.course}</td>
-                <td className="py-3 px-4">{registration.date}</td>
-                <td className="py-3 px-4 flex justify-center space-x-2">
-                  <button 
-                    onClick={() => onApprove(registration.id)}
-                    className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md flex items-center"
-                  >
-                    <Check size={16} className="mr-1" /> Approve
-                  </button>
-                  <button 
-                    onClick={() => onReject(registration.id)}
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-md flex items-center"
-                  >
-                    <X size={16} className="mr-1" /> Reject
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
-
-// Completion of AssignMentorTable Component
-const AssignMentorTable = ({ registrations, mentors }) => {
-  return (
-    <div className="bg-gray-800 rounded-md p-6 border border-gray-700">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-bold">Assign Mentor</h2>
-        <SearchBar placeholder="Search students..." />
-      </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-900 rounded-md overflow-hidden">
-          <thead>
-            <tr className="bg-gray-700">
-              <th className="py-3 px-4 text-left">Student</th>
-              <th className="py-3 px-4 text-left">Course</th>
-              <th className="py-3 px-4 text-left">Current Mentor</th>
-              <th className="py-3 px-4 text-left">Assign To</th>
-              <th className="py-3 px-4 text-center">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {registrations.map((registration) => (
-              <tr key={registration.id} className="border-t border-gray-800 hover:bg-gray-800">
-                <td className="py-3 px-4">{registration.name}</td>
-                <td className="py-3 px-4">{registration.course}</td>
-                <td className="py-3 px-4">{registration.mentor}</td>
-                <td className="py-3 px-4">
-                  <select className="bg-gray-700 text-white rounded-md px-3 py-1 w-full focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">Select Mentor</option>
-                    {mentors.map(mentor => (
-                      <option key={mentor.id} value={mentor.id}>{mentor.name}</option>
-                    ))}
-                  </select>
-                </td>
-                <td className="py-3 px-4 text-center">
-                  <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-md">
-                    Assign
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-};
-
-export default AdminDashboard;

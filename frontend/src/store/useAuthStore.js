@@ -176,7 +176,7 @@ export const useAuthStore = create((set,get) => ({
       set({ isLoading: true });
       
       // API call to update profile
-      const response = await axiosInstance.patch('/auth/complete-profile', data);
+      const response = await axiosInstance.post('/auth/complete-profile', data);
       
       // Get the current user from the store
       const currentUser = get().user;

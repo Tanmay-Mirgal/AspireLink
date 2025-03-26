@@ -15,7 +15,7 @@ import MinimalistSidebar from './components/sidebar/MinimalistSidebar';
 function App() {
   return (
     <>
-    <MinimalistSidebar/>
+    {/* <MinimalistSidebar/> */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
