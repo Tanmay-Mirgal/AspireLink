@@ -5,6 +5,9 @@ import Home from './pages/Home/Home';
 import Signup from "./pages/Signup/Signup";
 import Login from './pages/Login/Login';
 import Role from './pages/Role/Role';
+import MentorCompleteProfile from './pages/Mentor/CompleteProfile/CompleteProfile';
+import StudentCompleteProfile from './pages/User/CompleteProfile/CompleteProfile';
+import Dashboard from "./pages/Admin/Dashboard/Dashboard"
 
 function App() {
   return (
@@ -14,6 +17,9 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/role" element={<Role />} />
+        <Route path="/mentor-complete-profile" element={<MentorCompleteProfile />} />
+        <Route path="/student-complete-profile" element={<StudentCompleteProfile />} />
+        <Route path="/admin" element={<Dashboard />} />
       </Routes>
       <Toaster />
     </>

@@ -168,5 +168,48 @@ export const useAuthStore = create((set,get) => ({
       toast.error(errorMessage);
       throw error;
     }
+  },
+
+
+  completeProfile: async (data) => {
+    try {
+      set({ isLoading: true });
+      
+      // API call to update profile
+      const response = await axiosInstance.patch('/auth/complete-profile', data);
+      
+      // Get the current user from the store
+      const currentUser = get().user;
+      
+      // Create updated user object with new profile data
+      const updatedUser = { 
+        ...currentUser, 
+        ...data 
+      };
+      
+      // Update local storage and store state
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      set({ 
+        user: updatedUser,
+        isLoading: false,
+        isError: false 
+      });
+
+      toast.success('Profile updated successfully');
+      return updatedUser;
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error?.response?.data?.message || 'Failed to update profile';
+      
+      set({ 
+        isError: true, 
+        error: errorMessage, 
+        isLoading: false 
+      });
+      
+      toast.error(errorMessage);
+      throw error;
+    }
   }
 }));

@@ -16,7 +16,7 @@ const RoleSelectionPage = () => {
   useEffect(() => {
     if (user?.role) {
       // If user already has a role, redirect to appropriate dashboard
-      navigate(`/${user.role}-dashboard`);
+      navigate(`/${user.role}-complete-profile`);
     }
   }, [user, navigate]);
 
