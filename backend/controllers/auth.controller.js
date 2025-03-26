@@ -238,21 +238,25 @@ export const completeProfile = async (req, res) => {
     // Save updated user
     await user.save();
 
+    const responseUser = {
+      id: user._id,
+      firstName: user.fullName.firstName,
+      lastName: user.fullName.lastName,
+      email: user.email,
+      role: user.role,
+      profilePic: user.profilePic,
+      bio: user.bio,
+    };
+
+    if (user.role === "student") {
+      responseUser.studentProfile = user.studentProfile;
+    } else if (user.role === "mentor") {
+      responseUser.mentorProfile = user.mentorSchema[0];
+    }
+
     res.status(200).json({
       message: "Profile updated successfully",
-      user: {
-        id: user._id,
-        firstName: user.fullName.firstName,
-        lastName: user.fullName.lastName,
-        email: user.email,
-        role: user.role,
-        profilePic: user.profilePic,
-        bio: user.bio,
-        studentProfile:
-          user.role === "student" ? user.studentProfile : undefined,
-        mentorProfile:
-          user.role === "mentor" ? user.mentorSchema[0] : undefined,
-      },
+      user: responseUser,
     });
   } catch (error) {
     console.error("Complete profile error:", error);
