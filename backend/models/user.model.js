@@ -72,6 +72,11 @@ const userSchema = new mongoose.Schema(
         ref: "User",
         default: null,
       }],
+      requestedMentor:[{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
+      }]
     },
     mentorSchema: [
       {
@@ -89,6 +94,11 @@ const userSchema = new mongoose.Schema(
             ref: "User",
           },
         ],
+        requests:[{
+          type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+         
+        }]
       },
     ],
   },
