@@ -1,6 +1,6 @@
 "use client"
 
-import { UserCheck, Users, Clock, Search, UserPlus, CheckCircle, BarChart3 } from "lucide-react"
+import { UserCheck, Users, Clock, Search, UserPlus, CheckCircle, BarChart3, PieChart } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -58,6 +58,12 @@ export function AdminSidebar({ activeTab, setActiveTab }) {
             <SidebarMenuButton onClick={() => setActiveTab("assign")} isActive={activeTab === "assign"}>
               <UserPlus className="h-4 w-4" />
               <span>Assign Mentor</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton onClick={() => setActiveTab("analytics")} isActive={activeTab === "analytics"}>
+              <PieChart className="h-4 w-4" />
+              <span>Analytics</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

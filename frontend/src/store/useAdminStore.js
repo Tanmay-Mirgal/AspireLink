@@ -55,6 +55,24 @@ export const useAdminStore = create((set, get) => ({
     pendingRegistrations: [],
     approvedRegistrations: [],
     
+    // Analytics data
+    analytics: {
+      totalStudents: 0,
+      totalMentors: 0,
+      assignmentStats: {
+        assignedStudents: 0,
+        unassignedStudents: 0,
+        mentorsWithStudents: 0,
+        mentorsWithoutStudents: 0
+      },
+      profileStats: {
+        completedProfiles: 0,
+        incompleteProfiles: 0
+      },
+      skillsDistribution: [],
+      monthlyGrowth: []
+    },
+    
     // Raw data (if needed)
     rawStudents: [],
     rawMentors: [],
@@ -166,6 +184,27 @@ export const useAdminStore = create((set, get) => ({
       }
     },
     
+    // Fetch analytics data
+    getAnalytics: async () => {
+      try {
+        set({ isLoading: true, error: null })
+        const response = await axiosInstance.get('/admin/analytics')
+        
+        set({ 
+          analytics: response.data,
+          isLoading: false 
+        })
+        return response.data
+      } catch (error) {
+        set({ 
+          error: error.response?.data?.message || 'Failed to fetch analytics data', 
+          isLoading: false 
+        })
+        console.error('Get analytics error:', error)
+        return null
+      }
+    },
+    
     updateRegistration: async (id) => {
       try {
         set({ isLoading: true, error: null })
@@ -231,7 +270,7 @@ export const useAdminStore = create((set, get) => ({
       )
     },
     
-    // Function to fetch all data
+    // Function to fetch all data including analytics
     fetchAllData: async () => {
       set({ isLoading: true, error: null })
       try {
@@ -239,7 +278,8 @@ export const useAdminStore = create((set, get) => ({
           get().getAllStudents(),
           get().getAllMentors(),
           get().getPendingRegistrations(),
-          get().getApprovedRegistrations()
+          get().getApprovedRegistrations(),
+          get().getAnalytics()
         ])
         set({ isLoading: false })
       } catch (error) {

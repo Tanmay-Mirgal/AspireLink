@@ -1,13 +1,10 @@
 "use client"
 
-import { useState,useEffect } from "react"
+import { useState, useEffect } from "react"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { useAdminStore } from "@/store/useAdminStore"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2 } from "lucide-react"
-
-// Sample data
-import { chartData } from "@/pages/Admin/Dashboard/components/sampleData"
 
 // Layout components
 import { AdminSidebar } from "@/pages/Admin/Dashboard/components/AdminSidebar"
@@ -15,7 +12,7 @@ import { AdminHeader } from "@/pages/Admin/Dashboard/components/AdminHeader"
 
 // Dashboard components
 import { StatsCards } from "@/pages/Admin/Dashboard/components/StatsCards"
-import { NetworkChart } from "@/pages/Admin/Dashboard/components/NetworkChart"
+import { AnalyticsDashboard, SkillMatchingAnalytics } from "@/pages/Admin/Dashboard/components/AnalyticsDashboard"
 import { RecentUsers } from "@/pages/Admin/Dashboard/components/RecentUsers"
 
 // Table components
@@ -42,6 +39,7 @@ export default function AdminDashboard() {
     mentors, 
     pendingRegistrations, 
     approvedRegistrations,
+    analytics,
     fetchAllData
   } = useAdminStore()
   
@@ -61,6 +59,15 @@ export default function AdminDashboard() {
       return () => clearTimeout(timer)
     }
   }, [error, clearError])
+
+  // Handler functions for managing selected student and mentor from the AssignmentForm
+  const handleSelectStudent = (student) => {
+    setSelectedStudent(student);
+  };
+
+  const handleSelectMentor = (mentor) => {
+    setSelectedMentor(mentor);
+  };
 
   return (
     <SidebarProvider>
@@ -89,9 +96,16 @@ export default function AdminDashboard() {
                 <StatsCards 
                   students={students} 
                   mentors={mentors} 
-                  pendingRegistrations={pendingRegistrations} 
+                  pendingRegistrations={pendingRegistrations}
+                  analytics={analytics}
                 />
-                <NetworkChart chartData={chartData} />
+                
+                {/* Add Analytics Dashboard */}
+                <AnalyticsDashboard />
+                
+                {/* Skill Matching Analytics */}
+                <SkillMatchingAnalytics />
+                
                 <RecentUsers students={students} mentors={mentors} />
               </>
             )}
@@ -115,17 +129,20 @@ export default function AdminDashboard() {
             {activeTab === "assign" && (
               <div className="grid gap-6">
                 <AssignmentForm 
-                  students={students} 
-                  mentors={mentors} 
-                  selectedStudent={selectedStudent}
-                  setSelectedStudent={setSelectedStudent}
-                  selectedMentor={selectedMentor}
-                  setSelectedMentor={setSelectedMentor}
+                  onSelectStudent={handleSelectStudent}
+                  onSelectMentor={handleSelectMentor}
                 />
                 <MatchDetails
                   selectedStudent={selectedStudent}
                   selectedMentor={selectedMentor}
                 />
+              </div>
+            )}
+            
+            {activeTab === "analytics" && (
+              <div className="grid gap-6">
+                <AnalyticsDashboard />
+                <SkillMatchingAnalytics />
               </div>
             )}
           </main>

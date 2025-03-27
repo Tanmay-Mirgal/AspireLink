@@ -8,6 +8,7 @@ import {
   assignMentor, 
   getAllMentors, 
   getAllStudents, 
+  getAnalytics, 
   getRegistration, 
   updateRegistration,
 } from "../controllers/admin.controller.js";
@@ -23,5 +24,6 @@ router.post("/assign-mentor", assignMentor);
 router.get("/get-all-students", getAllStudents);
 router.get("/get-all-mentors", getAllMentors);
 router.get("/approved-students", approvedRegistration);
+router.get("/analytics",getAnalytics)
 
 export default router;
