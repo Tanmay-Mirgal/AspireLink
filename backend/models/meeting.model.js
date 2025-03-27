@@ -24,6 +24,11 @@ const meetingSchema = new mongoose.Schema({
   passcode:{
     type:String,
     required:true
+  },
+  status:{
+    type:String,
+    default:"pending",
+    enum:["pending","started","finished"]
   }
 });
 
