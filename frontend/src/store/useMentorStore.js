@@ -121,6 +121,54 @@ const useMentorStore = create((set, get) => ({
     }
   },
 
+  fetchAssignedStudents: async () => {
+    set({ isLoading: true, error: null });
+    try {
+      const response = await axiosInstance.get('/mentor/get-student-assigned', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+
+      const transformedStudents = response.data.students.map((student) => {
+        // Check if the program/skill is an object and extract the name
+        const programDisplay = student.studentProfile?.skills?.[0]
+          ? (typeof student.studentProfile.skills[0] === 'object' 
+             ? student.studentProfile.skills[0].name 
+             : student.studentProfile.skills[0])
+          : 'Not specified';
+          
+        return {
+          id: student._id,
+          name: `${student.fullName.firstName} ${student.fullName.lastName}`,
+          program: programDisplay,
+          // ... other fields
+        };
+      });
+      set({
+        assignedStudents: transformedStudents,
+        isLoading: false
+      });
+
+      return transformedStudents;
+    } catch (error) {
+      set({
+        error: error.response?.data?.message || 'Failed to fetch assigned students',
+        isLoading: false
+      });
+      throw error;
+    }
+  },
+
+  // Placeholder methods for potential future functionality
+  addStudent: async (studentData) => {
+    // Implement student addition logic
+  },
+
+  removeStudent: async (studentId) => {
+    // Implement student removal logic
+  },
+
   clearError: () => set({ error: null })
 }));
 
