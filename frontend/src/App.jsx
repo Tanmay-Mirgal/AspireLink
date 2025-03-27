@@ -8,9 +8,11 @@ import Role from './pages/Role/Role';
 import MentorCompleteProfile from './pages/Mentor/CompleteProfile/CompleteProfile';
 import StudentCompleteProfile from './pages/User/CompleteProfile/CompleteProfile';
 import Dashboard from "./pages/Admin/Dashboard/Dashboard"
-import StudentProfile from './pages/User/StudentProfilePage';
-import MentorProfile from './pages/Mentor/MentorProfile';
+
+import Profile from './pages/Mentor/MentorProfile';
 import MinimalistSidebar from './components/sidebar/MinimalistSidebar';
+import MentorDashboard from './pages/Mentor/Dashboard/Dashboard';
+import StudentDashboard from './pages/User/Dashboard/Dashboard';
 
 function App() {
   return (
@@ -24,9 +26,10 @@ function App() {
         <Route path="/mentor-complete-profile" element={<MentorCompleteProfile />} />
         <Route path="/student-complete-profile" element={<StudentCompleteProfile />} />
         <Route path="/admin" element={<Dashboard />} />
-        <Route path="/studentprofile" element={<StudentProfile />} />
-        <Route path="/mentorprofile" element={<MentorProfile />} />
-
+  
+        <Route path="/mentor-dashboard" element={<MentorDashboard />} />
+        <Route path="/student-dashboard" element={<StudentDashboard />} />
+        
       </Routes>
       <Toaster />
     </>

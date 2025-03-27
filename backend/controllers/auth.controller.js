@@ -264,5 +264,5 @@ export const completeProfile = async (req, res) => {
         .status(500)
         .json({ message: "Failed to update profile", error: error.message });
     }
-  };
+};
   
