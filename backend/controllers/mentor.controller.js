@@ -122,7 +122,6 @@ export const getRequests = async (req, res) => {
         });
     }
 }
-
 export const studentAssigned = async (req, res) => {
     try {
         const mentorId = req.user._id;
