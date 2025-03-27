@@ -12,6 +12,7 @@ import Dashboard from "./pages/Admin/Dashboard/Dashboard"
 import MinimalistSidebar from './components/sidebar/MinimalistSidebar';
 import MentorDashboard from './pages/Mentor/Dashboard/Dashboard';
 import StudentDashboard from './pages/User/Dashboard/Dashboard';
+import Profile from './pages/Profile/Profile';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/mentor-complete-profile" element={<MentorCompleteProfile />} />
         <Route path="/student-complete-profile" element={<StudentCompleteProfile />} />
         <Route path="/admin" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
   
         <Route path="/mentor-dashboard" element={<MentorDashboard />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />

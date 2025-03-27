@@ -104,11 +104,11 @@ export const useAuthStore = create((set,get) => ({
     }
   },
 
-  getProfile: async () => {
+  getProfile: async (data) => {
     try {
       set({ isLoading: true });
       
-      const response = await axiosInstance.get('/auth/profile');
+      const response = await axiosInstance.get('/auth/get-profile');
       const { user } = response.data;
       
       localStorage.setItem('user', JSON.stringify(user));

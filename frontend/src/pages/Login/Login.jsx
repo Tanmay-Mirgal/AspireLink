@@ -51,7 +51,7 @@ const LoginPage = () => {
       }
       
       // Navigate to dashboard or profile page after login
-      navigate('/dashboard');
+      navigate('/profile');
     } catch (error) {
       // Error handling is done in the login function via toast
       console.error('Login error:', error);
