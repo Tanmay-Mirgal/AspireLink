@@ -13,6 +13,7 @@ import Dashboard from "./pages/Admin/Dashboard/Dashboard"
 import MentorDashboard from './pages/Mentor/Dashboard/Dashboard';
 import StudentDashboard from './pages/User/Dashboard/Dashboard';
 import Profile from './pages/Profile/Profile';
+import Feed from './pages/Feed/Feed';
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         <Route path="/student-complete-profile" element={<StudentCompleteProfile />} />
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/feed" element={<Feed />} />
   
         <Route path="/mentor-dashboard" element={<MentorDashboard />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />

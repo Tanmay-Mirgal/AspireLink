@@ -86,6 +86,16 @@ import {
                 <span>Progress Tracker</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
+
+            <SidebarMenuItem>
+              <SidebarMenuButton 
+                isActive={activeTab === "Resume"} 
+                onClick={() => setActiveTab("Resume")}
+              >
+                <PieChart />
+                <span>Resume Analyzer</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="border-t p-6">

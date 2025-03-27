@@ -6,6 +6,7 @@ import { ConnectionsTab } from "./ConnectionsTab"
 import { PostsTab } from "./PostsTab"
 import { ProgressTab } from "./ProgressTab"
 import { useStudentStore } from "@/store/useStudentStore"
+import ResumeAnalyzer from "./ResumeAnalyzer"
 
 export function DashboardTabs() {
   // Get state and actions directly from the store
@@ -30,13 +31,14 @@ export function DashboardTabs() {
   ]
  return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-      <TabsList className="grid w-full grid-cols-6">
+      <TabsList className="grid w-full grid-cols-7">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="mentors">Mentors</TabsTrigger>
         <TabsTrigger value="skills">Skills</TabsTrigger>
         <TabsTrigger value="connections">Connections</TabsTrigger>
         <TabsTrigger value="posts">Posts</TabsTrigger>
         <TabsTrigger value="progress">Progress</TabsTrigger>
+        <TabsTrigger value="Resume">Resume Analyzer</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview" className="space-y-6">
@@ -74,6 +76,9 @@ export function DashboardTabs() {
           studentProfile={studentProfile} 
           progressData={dummyProgressData} 
         />
+      </TabsContent>
+      <TabsContent value="Resume" className="space-y-6">
+        <ResumeAnalyzer/>
       </TabsContent>
     </Tabs>
   )
