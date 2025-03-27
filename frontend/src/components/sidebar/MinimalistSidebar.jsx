@@ -67,14 +67,14 @@ const MinimalistSidebar = () => {
       </div>
 
       {/* Profile Image at Bottom */}
-      <div className="pb-4 flex items-center">
+      <a href="/profile"><button ><div className="pb-4 flex items-center">
         <img
           src="/api/placeholder/40/40"
           alt="Profile"
           className="w-10 h-10 rounded-full border-2 border-white/20"
         />
         {isExpanded && <span className="ml-3 text-sm text-gray-300">Profile</span>}
-      </div>
+      </div></button></a>
     </div>
   );
 };
