@@ -1,16 +1,16 @@
 import React, { useState } from "react";
-import { 
-  Menu, 
-  Search, 
-  Home, 
-  Send, 
-  Cloud, 
-  Users, 
-  Settings, 
-  Film, 
-  Camera ,LogOut
+import {
+  Menu,
+  Search,
+  Home,
+  Send,
+  Cloud,
+  Users,
+  Settings,
+  LogOut,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
+import LanguageSelector from "@/pages/LanguageSelector";
 
 const MinimalistSidebar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -26,42 +26,19 @@ const MinimalistSidebar = () => {
   ];
 
   return (
-    <div 
+    <div
       className={`
-        h-full 
-        bg-gray-900 
-        text-white 
-        flex 
-        flex-col 
-        items-center 
-        py-4 
-        space-y-6 
-        fixed 
-        left-0 
-        top-0 
-        transition-all 
-        duration-300
-        ${isExpanded ? 'w-64' : 'w-16'}
+        h-full bg-gray-900 text-white flex flex-col items-center py-4 space-y-6 fixed left-0 top-0 transition-all duration-300
+        ${isExpanded ? "w-64" : "w-16"}
       `}
     >
       {/* Hamburger Menu */}
-      <button 
+      <button
         className="text-gray-400 hover:text-white self-end mr-4"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <Menu />
       </button>
-
-      <div className="mt-auto pb-4 flex items-center">
-        <img 
-          src="/api/placeholder/40/40" 
-          alt="Profile" 
-          className="w-10 h-10 rounded-full border-2 border-white/20"
-        />
-        {isExpanded && (
-          <span className="ml-3 text-sm text-gray-300">Profile</span>
-        )}
-      </div>
 
       {/* Navigation Items */}
       <div className="flex flex-col space-y-4 w-full px-2">
@@ -70,12 +47,7 @@ const MinimalistSidebar = () => {
             to={item.path}
             key={item.key}
             className={({ isActive }) => `
-              p-2 
-              rounded-lg 
-              transition-all 
-              duration-300 
-              flex 
-              items-center 
+              p-2 rounded-lg transition-all duration-300 flex items-center
               ${isActive ? "bg-gray-700 text-purple-400" : "text-gray-400 hover:text-white"}
             `}
           >
@@ -89,17 +61,20 @@ const MinimalistSidebar = () => {
         ))}
       </div>
 
+      {/* Language Selector */}
+      <div className="mt-auto w-full ">
+        <LanguageSelector />
+      </div>
+
       {/* Profile Image at Bottom */}
-      {/* <div className="mt-auto pb-4 flex items-center">
-        <img 
-          src="/api/placeholder/40/40" 
-          alt="Profile" 
+      <div className="pb-4 flex items-center">
+        <img
+          src="/api/placeholder/40/40"
+          alt="Profile"
           className="w-10 h-10 rounded-full border-2 border-white/20"
         />
-        {isExpanded && (
-          <span className="ml-3 text-sm text-gray-300">Profile</span>
-        )}
-      </div> */}
+        {isExpanded && <span className="ml-3 text-sm text-gray-300">Profile</span>}
+      </div>
     </div>
   );
 };

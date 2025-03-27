@@ -17,7 +17,7 @@ import Profile from './pages/Profile/Profile';
 function App() {
   return (
     <>
-    {/* <MinimalistSidebar/> */}
+    <MinimalistSidebar/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
