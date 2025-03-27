@@ -7,6 +7,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import MinimalistSidebar from '@/components/sidebar/MinimalistSidebar';
 
 const SignupPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -60,9 +61,11 @@ const SignupPage = () => {
   };
 
   return (
+    <>
+        <MinimalistSidebar/>
     <div className="flex min-h-screen w-full">
       {/* Left side - Signup form */}
-      <div className="flex w-full md:w-1/2 flex-col items-start justify-center px-8 md:px-12 lg:px-16">
+      <div className="flex w-full md:w-1/2 flex-col items-start justify-center px-8 md:px-12 lg:px-16 ml-6">
         <div className="mb-10">
           <div className="flex items-center">
             <div className="h-8 w-8 flex items-center justify-center rounded bg-blue-600 text-white mr-2">
@@ -70,7 +73,7 @@ const SignupPage = () => {
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
               </svg>
             </div>
-            <span className="text-xl font-bold text-blue-600">dotwork</span>
+            <span className="text-xl font-bold text-blue-600">TreeTex</span>
           </div>
         </div>
 
@@ -267,6 +270,7 @@ const SignupPage = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -9,7 +9,7 @@ import MentorCompleteProfile from './pages/Mentor/CompleteProfile/CompleteProfil
 import StudentCompleteProfile from './pages/User/CompleteProfile/CompleteProfile';
 import Dashboard from "./pages/Admin/Dashboard/Dashboard"
 
-import MinimalistSidebar from './components/sidebar/MinimalistSidebar';
+// import MinimalistSidebar from './components/sidebar/MinimalistSidebar';
 import MentorDashboard from './pages/Mentor/Dashboard/Dashboard';
 import StudentDashboard from './pages/User/Dashboard/Dashboard';
 import Profile from './pages/Profile/Profile';
