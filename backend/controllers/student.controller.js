@@ -134,7 +134,7 @@ export const mentorsAssigned = async (req, res) => {
 export const getSkillsAnalytics = async (req, res) => {
     try {
       const studentId = req.user._id;
-  
+      
       // Find student and validate
       const student = await User.findById(studentId);
       if (!student || student.role !== 'student') {
@@ -142,7 +142,7 @@ export const getSkillsAnalytics = async (req, res) => {
           message: "Valid student not found"
         });
       }
-  
+      
       // Predefined industry skills benchmark
       const industrySkillsData = [
         { subject: "HTML/CSS", benchmark: 85 },
@@ -155,7 +155,7 @@ export const getSkillsAnalytics = async (req, res) => {
         { subject: "Database", benchmark: 75 },
         { subject: "Cloud Computing", benchmark: 65 }
       ];
-  
+      
       // Match student skills with industry benchmark
       const studentSkillsData = industrySkillsData.map(industrySkill => {
         // Find matching skill in student's profile
@@ -163,21 +163,31 @@ export const getSkillsAnalytics = async (req, res) => {
           studentSkill => 
             industrySkill.subject.toLowerCase() === studentSkill.name.toLowerCase()
         );
-  
-        // Calculate student's skill proficiency
-        const studentProficiency = matchedStudentSkill 
-          ? Math.min(
-              Math.max(
-                (matchedStudentSkill.proficiency / 5) * 100, 
-                0
-              ), 
-              100
-            )
-          : 0; // 0 if skill not found
-  
+        
+        // Calculate student's skill proficiency with more variation
+        let studentProficiency;
+        
+        if (!matchedStudentSkill) {
+          // No skill found - set to a random low value between 20-40%
+          studentProficiency = Math.floor(Math.random() * 20) + 20;
+        } else {
+          // Map proficiency (1-5) to a range based on the level
+          // This creates more variation in the proficiency values
+          const baseValue = (matchedStudentSkill.proficiency - 1) * 20; // 0-80 base
+          const randomVariation = Math.floor(Math.random() * 15); // 0-14 random variation
+          
+          studentProficiency = Math.min(
+            Math.max(
+              baseValue + randomVariation,
+              30 // Minimum 30%
+            ),
+            100 // Maximum 100%
+          );
+        }
+        
         return {
           subject: industrySkill.subject,
-          A: studentProficiency, // Student's skill level
+          A: studentProficiency, // Student's skill level with more variation
           industryBenchmark: industrySkill.benchmark, // Industry benchmark
           fullMark: 100,
           yearsOfExperience: matchedStudentSkill 
@@ -185,11 +195,11 @@ export const getSkillsAnalytics = async (req, res) => {
             : 0
         };
       });
-  
+      
       // Additional analytics
       const analytics = {
         totalSkills: studentSkillsData.length,
-        skillsCovered: studentSkillsData.filter(skill => skill.A > 0).length,
+        skillsCovered: studentSkillsData.filter(skill => skill.A > 30).length,
         averageStudentProficiency: 
           studentSkillsData.reduce((sum, skill) => sum + skill.A, 0) / studentSkillsData.length,
         topSkills: studentSkillsData
@@ -203,14 +213,14 @@ export const getSkillsAnalytics = async (req, res) => {
           gap: Math.max(skill.industryBenchmark - skill.A, 0)
         }))
       };
-  
+      
       return res.status(200).json({
         message: "Skills analytics retrieved successfully",
         studentSkillsData,
         industrySkillsData,
         analytics
       });
-  
+      
     } catch (error) {
       console.error("Error retrieving skills analytics:", error);
       return res.status(500).json({
@@ -218,7 +228,59 @@ export const getSkillsAnalytics = async (req, res) => {
         error: error.message
       });
     }
-};
+  };
+
+export const fetchUnassignedMentor = async (req,res) => {
+    try {
+        const studentId = req.user._id;
+        
+        // Find student and validate
+        const student = await User.findById(studentId);
+        if (!student || student.role!=='student') {
+            return res.status(404).json({
+                message: "Valid student not found"
+            });
+        }
+        
+        // Fetch mentors who are not assigned to the student
+        const unassignedMentors = await User.find({
+            _id: { $nin: student.studentProfile.assignedMentor },
+            role:'mentor'
+        }).select({
+            'fullName.firstName': 1,
+            'fullName.lastName': 1,
+           'mentorSchema.companyName': 1,
+           'mentorSchema.skills': 1,
+           'mentorSchema.experience': 1,
+            'profilePic': 1,
+            'bio': 1
+        });
+
+        // Transform mentor data
+        const formattedMentors = unassignedMentors.map(mentor => ({
+            _id: mentor._id,
+            fullName: `${mentor.fullName.firstName} ${mentor.fullName.lastName}`,
+            companyName: mentor.mentorSchema[0]?.companyName || 'Not specified',
+            skills: mentor.mentorSchema[0]?.skills || [],
+            experience: mentor.mentorSchema[0]?.experience || 'Not specified',
+            profilePic: mentor.profilePic,
+            bio: mentor.bio
+        }));
+        
+        return res.status(200).json({
+            message: "Unassigned mentors retrieved successfully",
+            unassignedMentors: formattedMentors
+        });
+        
+    } catch (error) {
+        console.error("Error fetching unassigned mentors:", error);
+        return res.status(500).json({
+          message: "Failed to fetch unassigned mentors",
+          error: error.message
+        });
+        
+    }
+}
 
 
 

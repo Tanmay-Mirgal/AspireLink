@@ -1,19 +1,10 @@
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartTooltipItem } from "@/components/ui/chart"
-import {
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-} from "recharts"
+
+import { Award, BookOpen, Users } from "lucide-react"
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card"
+import { ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Tooltip, BarChart, XAxis, Bar, YAxis } from "recharts"
 
 export function OverviewTab({
   studentProfile,
@@ -34,18 +25,24 @@ export function OverviewTab({
 
 // Student Profile Card
 function StudentProfileCard({ studentProfile }) {
+    const user = JSON.parse(localStorage.getItem('user'))
+  const dummyBadges = [
+    { name: "Profile Complete", icon: Award, color: "bg-green-500" },
+    { name: "Fast Learner", icon: BookOpen, color: "bg-blue-500" },
+    { name: "Team Player", icon: Users, color: "bg-purple-500" },
+  ];
   return (
     <Card>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
           <div>
-            <CardTitle className="text-2xl">{studentProfile.name}</CardTitle>
+            <CardTitle className="text-2xl">{user.fullName.firstName + " " + user.fullName.lastName} </CardTitle>
             <CardDescription>
-              {studentProfile.program} • Joined {studentProfile.joinDate}
+              {user.studentProfile.skills[0].name} • Joined {user.createdAt.split("T")[0]}
             </CardDescription>
           </div>
           <div className="flex gap-2">
-            {studentProfile.badges.map((badge, index) => (
+            {dummyBadges.map((badge, index) => (
               <div key={index} className="flex flex-col items-center">
                 <div className={`${badge.color} p-2 rounded-full`}>
                   <badge.icon className="h-4 w-4 text-white" />
@@ -70,7 +67,13 @@ function StudentProfileCard({ studentProfile }) {
 }
 
 // Job Eligibility Card
-function JobEligibilityCard({ jobEligibilityData }) {
+function JobEligibilityCard() {
+    const jobEligibilityData = [
+        { name: 'Data Scientist', score: 80 },
+        { name: 'Software Engineer', score: 70 },
+        { name: 'Product Manager', score: 90 },
+        { name: 'UX Designer', score: 60 },
+    ];
     return (
       <Card>
         <CardHeader>
@@ -129,64 +132,119 @@ function JobEligibilityCard({ jobEligibilityData }) {
   }
 // Skills Comparison Cards
 function SkillsComparisonCards({ skillsData, industrySkillsData }) {
-  return (
-    <div className="grid gap-6 md:grid-cols-2">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Your Skills</CardTitle>
-            <CardDescription>Current skill assessment</CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={skillsData}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="subject" />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} />
-                <Radar
-                  name="Skills"
-                  dataKey="A"
-                  stroke="var(--chart-1)"
-                  fill="var(--chart-1)"
-                  fillOpacity={0.6}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between">
-          <div>
-            <CardTitle>Industry Requirements</CardTitle>
-            <CardDescription>Skills required in the industry</CardDescription>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <RadarChart cx="50%" cy="50%" outerRadius="80%" data={industrySkillsData}>
-                <PolarGrid />
-                <PolarAngleAxis dataKey="subject" />
-                <PolarRadiusAxis angle={30} domain={[0, 100]} />
-                <Radar
-                  name="Industry"
-                  dataKey="A"
-                  stroke="var(--chart-2)"
-                  fill="var(--chart-2)"
-                  fillOpacity={0.6}
-                />
-              </RadarChart>
-            </ResponsiveContainer>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
+    // Prepare data for comparison radar chart
+    const comparisonData = skillsData.map(skill => ({
+      subject: skill.subject,
+      studentSkill: skill.A, // Student's skill level
+      industryBenchmark: skill.industryBenchmark, // Industry benchmark
+      fullMark: 100
+    }));
+  
+    return (
+      <div className="grid gap-6 md:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <CardTitle>Your Skills Comparison</CardTitle>
+              <CardDescription>How your skills measure against industry standards</CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[400px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <RadarChart 
+                  cx="50%" 
+                  cy="50%" 
+                  outerRadius="80%" 
+                  data={comparisonData}
+                >
+                  <PolarGrid />
+                  <PolarAngleAxis dataKey="subject" />
+                  <PolarRadiusAxis angle={30} domain={[0, 100]} />
+                  <Radar
+                    name="Your Skills"
+                    dataKey="studentSkill"
+                    stroke="var(--chart-1)"
+                    fill="var(--chart-1)"
+                    fillOpacity={0.6}
+                  />
+                  <Radar
+                    name="Industry Benchmark"
+                    dataKey="industryBenchmark"
+                    stroke="var(--chart-2)"
+                    fill="var(--chart-2)"
+                    fillOpacity={0.3}
+                  />
+                  <Tooltip 
+                    content={({ active, payload }) => {
+                      if (active && payload && payload.length) {
+                        const studentSkill = payload.find(p => p.name === "Your Skills");
+                        const industryBenchmark = payload.find(p => p.name === "Industry Benchmark");
+                        
+                        return (
+                          <div className="bg-white p-4 border rounded shadow-lg">
+                            <h4 className="font-bold mb-2">{payload[0].payload.subject}</h4>
+                            <div className="space-y-1">
+                              <p>Your Skill Level: <span className="font-semibold">{studentSkill?.value || 0}%</span></p>
+                              <p>Industry Benchmark: <span className="font-semibold">{industryBenchmark?.value || 0}%</span></p>
+                            </div>
+                          </div>
+                        );
+                      }
+                      return null;
+                    }}
+                  />
+                </RadarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+  
+        <Card>
+          <CardHeader>
+            <CardTitle>Skill Gap Analysis</CardTitle>
+            <CardDescription>Areas for skill development</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {comparisonData
+                .sort((a, b) => b.industryBenchmark - a.industryBenchmark)
+                .map((skill) => (
+                  <div key={skill.subject} className="border-b pb-3 last:border-b-0">
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="font-medium">{skill.subject}</span>
+                      <span 
+                        className={`text-sm font-semibold ${
+                          skill.studentSkill >= skill.industryBenchmark 
+                            ? 'text-green-600' 
+                            : 'text-red-600'
+                        }`}
+                      >
+                        {skill.studentSkill >= skill.industryBenchmark 
+                          ? 'Above Benchmark' 
+                          : `Gap: ${skill.industryBenchmark - skill.studentSkill}%`}
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2.5">
+                      <div 
+                        className={`h-2.5 rounded-full ${
+                          skill.studentSkill >= skill.industryBenchmark 
+                            ? 'bg-green-600' 
+                            : 'bg-red-600'
+                        }`} 
+                        style={{ 
+                          width: `${Math.min(100, (skill.studentSkill / skill.industryBenchmark) * 100)}%` 
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
 // Upcoming Sessions Card
 function UpcomingSessionsCard({ upcomingSessions }) {

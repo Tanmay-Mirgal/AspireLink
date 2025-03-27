@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { CheckCircle, Clock, Award, Github, Code2, Calendar, Trophy, PlusCircle } from "lucide-react"
+import { CheckCircle, Clock, Award, Github, Code2, Calendar, Trophy, PlusCircle, BookOpen, Users } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -21,18 +21,19 @@ import {
 } from "recharts"
 
 export function ProgressTab({ studentProfile, progressData }) {
+    const user = JSON.parse(localStorage.getItem('user'))
   return (
     <>
-      <LearningProgressCard studentProfile={studentProfile} progressData={progressData} />
+      <LearningProgressCard studentProfile={studentProfile} user={user} progressData={progressData} />
       <ModulesCompletionCard progressData={progressData} />
       {/* <CodingActivityCard /> */}
-      <EarnedBadgesCard studentProfile={studentProfile} />
+      <EarnedBadgesCard studentProfile={studentProfile} user={user} />
     </>
   )
 }
 
 // Learning Progress Card Component
-function LearningProgressCard({ studentProfile, progressData }) {
+function LearningProgressCard({ studentProfile, progressData,user }) {
   // Calculate stats for the donut chart
   const completedModules = progressData.filter(module => module.completed).length;
   const inProgressModules = progressData.filter(module => !module.completed).length;
@@ -110,7 +111,7 @@ function LearningProgressCard({ studentProfile, progressData }) {
             <div className="flex justify-between mb-6">
               <div className="text-center p-4 bg-green-50 rounded-lg">
                 <p className="text-sm text-gray-500">Completion</p>
-                <p className="text-2xl font-bold text-green-600">{studentProfile.completionPercentage}%</p>
+                <p className="text-2xl font-bold text-green-600">{user.studentProfile.skills[0].proficiency}%</p>
                 <p className="text-xs text-gray-500">{completedModules} of {totalModules} modules</p>
               </div>
               <div className="text-center p-4 bg-blue-50 rounded-lg">
@@ -669,7 +670,14 @@ function RepositoryCard({ name, description, language, stars, forks, lastUpdate 
 }
 
 // Earned Badges Card Component
-function EarnedBadgesCard({ studentProfile }) {
+function EarnedBadgesCard() {
+  const dummyBadges = [
+    { name: "Profile Complete", icon: CheckCircle, color: "bg-green-500" },
+    { name: "Fast Learner", icon: BookOpen, color: "bg-blue-500" },
+    { name: "Team Player", icon: Users, color: "bg-purple-500" },
+    { name: "Complete React Module", icon: Code2, color: "bg-yellow-400", status: "In progress" },
+  ];
+
   return (
     <Card>
       <CardHeader>
@@ -678,7 +686,7 @@ function EarnedBadgesCard({ studentProfile }) {
       </CardHeader>
       <CardContent>
         <div className="grid gap-6 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {studentProfile.badges.map((badge, index) => (
+          {dummyBadges.map((badge, index) => (
             <BadgeItem 
               key={index}
               name={badge.name}
@@ -687,10 +695,6 @@ function EarnedBadgesCard({ studentProfile }) {
               awardedBy="David Wilson"
             />
           ))}
-          <InProgressBadgeItem 
-            name="Complete React Module"
-            status="In progress"
-          />
         </div>
       </CardContent>
     </Card>

@@ -21,6 +21,7 @@ import {
   } from "@/components/ui/sidebar"
   
   export function DashboardSidebar({ studentProfile, activeTab, setActiveTab }) {
+    const user = JSON.parse(localStorage.getItem('user'))
     return (
       <Sidebar className="border-r">
         <SidebarHeader className="border-b px-6 py-3">
@@ -92,14 +93,14 @@ import {
             <div className="flex items-center space-x-3">
               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <span className="text-primary font-medium">
-                  {studentProfile.name
+                  {user.fullName.firstName
                     .split(" ")
                     .map((n) => n[0])
                     .join("")}
                 </span>
               </div>
               <div>
-                <p className="text-sm font-medium">{studentProfile.name}</p>
+                <p className="text-sm font-medium">{user.fullName.firstName + " " + user.fullName.lastName}</p>
                 <p className="text-xs text-muted-foreground">{studentProfile.program}</p>
               </div>
             </div>

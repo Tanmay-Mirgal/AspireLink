@@ -4,23 +4,31 @@ import { MentorsTab } from "./MentorTabs"
 import { SkillsTab } from "./SkillsTab"
 import { ConnectionsTab } from "./ConnectionsTab"
 import { PostsTab } from "./PostsTab"
-import  {ProgressTab}  from "./ProgressTab"
+import { ProgressTab } from "./ProgressTab"
+import { useStudentStore } from "@/store/useStudentStore"
 
-
-
-export function DashboardTabs({
-  activeTab,
-  setActiveTab,
-  studentProfile,
-  assignedMentors,
-  skillsData,
-  industrySkillsData,
-  jobEligibilityData,
-  progressData,
-  upcomingSessions,
-  communityPosts
-}) {
-  return (
+export function DashboardTabs() {
+  // Get state and actions directly from the store
+  const {
+    activeTab,
+    setActiveTab,
+    studentProfile,
+    assignedMentors,
+    skillsData,
+    industrySkillsData,
+    jobEligibilityData,
+  skillAnalytics,
+    upcomingSessions,
+    communityPosts
+  } = useStudentStore()
+  // dummy progress data
+  const dummyProgressData = [
+    { module: "HTML/CSS", completed: true, score: 90 },
+    { module: "React", completed: false, progress: 60 },
+    { module: "Node.js", completed: false, progress: 40 },
+    { module: "UI/UX", completed: false, progress: 20 },
+  ]
+ return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
       <TabsList className="grid w-full grid-cols-6">
         <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -42,13 +50,14 @@ export function DashboardTabs({
       </TabsContent>
 
       <TabsContent value="mentors" className="space-y-6">
-        <MentorsTab assignedMentors={assignedMentors} />
+        <MentorsTab />
       </TabsContent>
 
       <TabsContent value="skills" className="space-y-6">
         <SkillsTab 
           skillsData={skillsData} 
-          industrySkillsData={industrySkillsData} 
+          industrySkillsData={industrySkillsData}
+          skillGapAnalysis={skillAnalytics?.skillGapAnalysis} 
         />
       </TabsContent>
 
@@ -63,7 +72,7 @@ export function DashboardTabs({
       <TabsContent value="progress" className="space-y-6">
         <ProgressTab 
           studentProfile={studentProfile} 
-          progressData={progressData} 
+          progressData={dummyProgressData} 
         />
       </TabsContent>
     </Tabs>
