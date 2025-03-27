@@ -28,8 +28,8 @@ export function MatchDetails({ selectedStudent, selectedMentor }) {
                   <div>
                     <span className="text-sm font-medium">Skills:</span>
                     <div className="mt-1 flex flex-wrap gap-1">
-                      {selectedStudent.skills.map((skill) => (
-                        <Badge key={skill} variant="outline">
+                      {Array.isArray(selectedStudent.skills) && selectedStudent.skills.map((skill, index) => (
+                        <Badge key={`student-skill-${index}`} variant="outline">
                           {skill}
                         </Badge>
                       ))}
@@ -53,19 +53,21 @@ export function MatchDetails({ selectedStudent, selectedMentor }) {
                   <div>
                     <span className="text-sm font-medium">Skills:</span>
                     <div className="mt-1 flex flex-wrap gap-1">
-                      {selectedMentor.skills.map((skill) => (
-                        <Badge
-                          key={skill}
-                          variant="outline"
-                          className={
-                            selectedStudent.skills.includes(skill)
-                              ? "bg-green-50 text-green-700 border-green-200"
-                              : ""
-                          }
-                        >
-                          {skill}
-                        </Badge>
-                      ))}
+                      {Array.isArray(selectedMentor.skills) && selectedMentor.skills.map((skill, index) => {
+                        // Check if this skill matches any of the student's skills
+                        const isMatchingSkill = Array.isArray(selectedStudent.skills) && 
+                          selectedStudent.skills.includes(skill);
+                        
+                        return (
+                          <Badge 
+                            key={`mentor-skill-${index}`} 
+                            variant="outline"
+                            className={isMatchingSkill ? "bg-green-50 text-green-700 border-green-200" : ""}
+                          >
+                            {skill}
+                          </Badge>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>

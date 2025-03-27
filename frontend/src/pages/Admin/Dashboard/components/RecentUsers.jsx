@@ -5,6 +5,10 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Badge } from "@/components/ui/badge"
 
 export function RecentUsers({ students, mentors }) {
+  // Take only the first 3 entries
+  const recentStudents = students.slice(0, 3)
+  const recentMentors = mentors.slice(0, 3)
+
   return (
     <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
       <Card>
@@ -21,13 +25,13 @@ export function RecentUsers({ students, mentors }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {students.slice(0, 3).map((student) => (
+              {recentStudents.map((student) => (
                 <TableRow key={student.id}>
                   <TableCell className="font-medium">{student.name}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
-                      {student.skills.map((skill) => (
-                        <Badge key={skill} variant="outline">
+                      {Array.isArray(student.skills) && student.skills.map((skill, index) => (
+                        <Badge key={`${student.id}-skill-${index}`} variant="outline">
                           {skill}
                         </Badge>
                       ))}
@@ -53,13 +57,13 @@ export function RecentUsers({ students, mentors }) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mentors.slice(0, 3).map((mentor) => (
+              {recentMentors.map((mentor) => (
                 <TableRow key={mentor.id}>
                   <TableCell className="font-medium">{mentor.name}</TableCell>
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
-                      {mentor.skills.map((skill) => (
-                        <Badge key={skill} variant="outline">
+                      {Array.isArray(mentor.skills) && mentor.skills.map((skill, index) => (
+                        <Badge key={`${mentor.id}-skill-${index}`} variant="outline">
                           {skill}
                         </Badge>
                       ))}

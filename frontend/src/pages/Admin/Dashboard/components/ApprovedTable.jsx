@@ -14,37 +14,37 @@ export function ApprovedTable({ approvedRegistrations }) {
       <CardContent className="px-0 sm:px-6">
         <div className="overflow-x-auto">
           <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Skills</TableHead>
-              <TableHead>Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {approvedRegistrations.map((registration) => (
-              <TableRow key={registration.id}>
-                <TableCell>{registration.id}</TableCell>
-                <TableCell className="font-medium">{registration.name}</TableCell>
-                <TableCell>{registration.email}</TableCell>
-                <TableCell>{registration.type}</TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {registration.skills.map((skill) => (
-                      <Badge key={skill} variant="outline">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>{registration.date}</TableCell>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Skills</TableHead>
+                <TableHead>Date</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {approvedRegistrations.map((registration) => (
+                <TableRow key={registration.id}>
+                  <TableCell>{registration.id}</TableCell>
+                  <TableCell className="font-medium">{registration.name}</TableCell>
+                  <TableCell>{registration.email}</TableCell>
+                  <TableCell>{registration.type}</TableCell>
+                  <TableCell>
+                    <div className="flex flex-wrap gap-1">
+                      {Array.isArray(registration.skills) && registration.skills.map((skill, index) => (
+                        <Badge key={`${registration.id}-skill-${index}`} variant="outline">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </TableCell>
+                  <TableCell>{registration.date}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </CardContent>
     </Card>
