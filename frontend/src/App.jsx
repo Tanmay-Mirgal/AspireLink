@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Home from './pages/Home/Home';
 import Signup from "./pages/Signup/Signup";
@@ -22,35 +22,33 @@ import ProjectsPage from './pages/Projects/ProjectsPage';
 import ProjectDetailsPage from './pages/Projects/ProjectDetailsPage';
 import JobDetail from './pages/JobDetails/JobDetails';
 import UserDetailProfilePage from './pages/Profile/UserDetailProfilePage ';
+import ProtectedRoute from './components/protected-route/ProtectedRoute';
 
 function App() {
+  const user = JSON.parse(localStorage.getItem('user'));
   return (
     <>
      <ModernNavbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/role" element={<Role />} />
-        <Route path="/mentor-complete-profile" element={<MentorCompleteProfile />} />
-        <Route path="/student-complete-profile" element={<StudentCompleteProfile />} />
-        <Route path="/admin" element={<Dashboard />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/profile/:userId" element={<UserDetailProfilePage />} />
-        <Route path="/feed" element={<Feed />} />
-        <Route path="/forum" element={<Forum />} />
-        <Route path="/forum/:id" element={<ForumDetail />} />
-        <Route path="/job/:jobId" element={<JobDetail />} />
-        
-        {/* Fixed Meeting Routes */}
-        <Route path="/meeting" element={<JoinPage />} />
-        <Route path="/meeting/:roomId" element={<MeetingPage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/project/:id" element={<ProjectDetailsPage />} />
-
-        
-        <Route path="/mentor-dashboard" element={<MentorDashboard />} />
-        <Route path="/student-dashboard" element={<StudentDashboard />} />
+        <Route path="/signup" element={user ? <Navigate to={"/"} replace /> : <Signup />} />
+        <Route path="/login" element={user ? <Navigate to={"/"} replace /> : <Login />} />
+        <Route path="/role" element={<ProtectedRoute><Role /></ProtectedRoute>} />
+        <Route path="/mentor-complete-profile" element={<ProtectedRoute><MentorCompleteProfile /></ProtectedRoute>} />
+        <Route path="/student-complete-profile" element={<ProtectedRoute><StudentCompleteProfile /></ProtectedRoute>} />
+        <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+        <Route path="/profile/:userId" element={<ProtectedRoute><UserDetailProfilePage /></ProtectedRoute>} />
+        <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
+        <Route path="/forum" element={<ProtectedRoute><Forum /></ProtectedRoute>} />
+        <Route path="/forum/:id" element={<ProtectedRoute><ForumDetail /></ProtectedRoute>} />
+        <Route path="/job/:jobId" element={<ProtectedRoute><JobDetail /></ProtectedRoute>} />
+        <Route path="/meeting" element={<ProtectedRoute><JoinPage /></ProtectedRoute>} />
+        <Route path="/meeting/:roomId" element={<ProtectedRoute><MeetingPage /></ProtectedRoute>} />
+        <Route path="/projects" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+        <Route path="/project/:id" element={<ProtectedRoute><ProjectDetailsPage /></ProtectedRoute>} />
+        <Route path="/mentor-dashboard" element={<ProtectedRoute><MentorDashboard /></ProtectedRoute>} />
+        <Route path="/student-dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
       </Routes>
       <Toaster />
     </>
