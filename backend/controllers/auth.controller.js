@@ -309,10 +309,9 @@ export const followUser = async (req, res) => {
 }
 export const unfollowUser = async (req, res) => {
   try {
-      const currentUserId = req.user.id; // Authenticated user
+      const currentUserId = req.user.id;
       const targetUserId = req.params.id;
 
-      // Check if trying to unfollow self
       if (currentUserId === targetUserId) {
           return res.status(400).json({
               message: "You cannot unfollow yourself"
@@ -352,6 +351,14 @@ export const unfollowUser = async (req, res) => {
 }
 export const getUserById = async (req,res) => {
   try {
+      const userId = req.params.id;
+      const user = await User.findById(userId).select("-password");
+      if (!user) {
+          return res.status(404).json({
+              message: "User not found"
+          });
+      }
+      res.status(200).json(user);
     
   } catch (error) {
     console.error("Get user by id error:", error);
@@ -360,5 +367,23 @@ export const getUserById = async (req,res) => {
         error: error.message
     });
     
+  }
+}
+export const getAnyStudents = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    
+    
+    const students = await User.find({ role: "student", _id: { $ne: userId } })
+      .select("-password")
+      .limit(6);
+    
+    res.status(200).json(students);
+  } catch (error) {
+    console.error("Get all students error:", error);
+    res.status(500).json({
+      message: "Failed to get all students",
+      error: error.message,
+    });
   }
 }
