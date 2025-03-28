@@ -11,13 +11,13 @@ import Dashboard from "./pages/Admin/Dashboard/Dashboard";
 import MentorDashboard from './pages/Mentor/Dashboard/Dashboard';
 import StudentDashboard from './pages/User/Dashboard/Dashboard';
 import Profile from './pages/Profile/Profile';
-// import UserDetailProfilePage from './pages/Profile/UserDetailProfilePage';
 import Feed from './pages/Feed/Feed';
 import Forum from './pages/Forum/Forums';
 import { ForumDetail } from './pages/Forum/ForumDetail';
 import JoinPage from './pages/Meeting/JoinPage';
 import MeetingPage from './pages/Meeting/Meeting';
 import JobDetail from './pages/JobDetails/JobDetails';
+import UserDetailProfilePage from './pages/Profile/UserDetailProfilePage ';
 
 function App() {
   return (
@@ -32,7 +32,7 @@ function App() {
         <Route path="/student-complete-profile" element={<StudentCompleteProfile />} />
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
-        {/* <Route path="/profile/:id" element={<UserDetailProfilePage />} /> */}
+        <Route path="/profile/:userId" element={<UserDetailProfilePage />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/forum" element={<Forum />} />
         <Route path="/forum/:id" element={<ForumDetail />} />
