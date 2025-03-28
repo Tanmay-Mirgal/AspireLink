@@ -30,13 +30,13 @@ const ModernNavbar = () => {
   };
 
   return (
-    <header className="top-0 z-50 w-full border-b bg-white">
+    <header className="top-0 z-50 w-full border-b bg-black text-white shadow-md">
       <div className="flex justify-between h-16 items-center px-5">
         {/* Logo */}
         <div className="flex items-center gap-2 mr-8">
           <Cloud className="h-6 w-6 text-primary" />
-          <span className="hidden font-bold text-xl sm:inline-block">
-            Bolt UI
+          <span className="hidden text-white font-bold text-xl sm:inline-block">
+           TreeTex
           </span>
         </div>
 
@@ -47,8 +47,8 @@ const ModernNavbar = () => {
               key={item.key}
               to={item.path}
               className={`
-                relative flex items-center gap-2 px-3 py-2 text-sm transition-all
-                hover:text-primary text-gray-500
+                relative flex items-center gap-2 px-3 py-2 text-sm 
+                 text-white
               `}
             >
               {item.icon}
