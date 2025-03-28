@@ -350,7 +350,7 @@ const OCRScanner = () => {
                         <CardDescription>Detailed analysis of skills across different domains</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="grid md:grid-cols-1 gap-4 ml-6">
+                        <div className="grid md:grid-cols-2 gap-4 ml-6">
                             {categorizedSkills.map((category, index) => (
                                 <div key={index} className="border rounded-lg p-4">
                                     <h4 className="text-sm font-semibold mb-2">{category.category} Skills</h4>

@@ -265,4 +265,92 @@ export const completeProfile = async (req, res) => {
         .json({ message: "Failed to update profile", error: error.message });
     }
 };
-  
+
+
+export const followUser = async (req, res) => {
+  try {
+      const currentUserId = req.user.id; // Authenticated user
+      const targetUserId = req.params.id;
+
+      // Check if trying to follow self
+      if (currentUserId === targetUserId) {
+          return res.status(400).json({
+              message: "You cannot follow yourself"
+          });
+      }
+
+      // Find both users
+      const currentUser = await User.findById(currentUserId);
+      const targetUser = await User.findById(targetUserId);
+
+      // Check if already following
+      if (currentUser.following.includes(targetUserId)) {
+          return res.status(400).json({
+              message: "You are already following this user"
+          });
+      }
+
+      // Update both users
+      await User.findByIdAndUpdate(currentUserId, {
+          $push: { following: targetUserId }
+      });
+
+      await User.findByIdAndUpdate(targetUserId, {
+          $push: { followers: currentUserId }
+      });
+
+      res.status(200).json({
+          message: "User followed successfully"
+      });
+  } catch (error) {
+      console.error("Error following user:", error);
+      res.status(500).json({
+          message: "Failed to follow user",
+          error: error.message
+      });
+  }
+}
+
+export const unfollowUser = async (req, res) => {
+  try {
+      const currentUserId = req.user.id; // Authenticated user
+      const targetUserId = req.params.id;
+
+      // Check if trying to unfollow self
+      if (currentUserId === targetUserId) {
+          return res.status(400).json({
+              message: "You cannot unfollow yourself"
+          });
+      }
+
+      // Find both users
+      const currentUser = await User.findById(currentUserId);
+      const targetUser = await User.findById(targetUserId);
+
+      // Check if not following
+      if (!currentUser.following.includes(targetUserId)) {
+          return res.status(400).json({
+              message: "You are not following this user"
+          });
+      }
+
+      // Update both users
+      await User.findByIdAndUpdate(currentUserId, {
+          $pull: { following: targetUserId }
+      });
+
+      await User.findByIdAndUpdate(targetUserId, {
+          $pull: { followers: currentUserId }
+      });
+
+      res.status(200).json({
+          message: "User unfollowed successfully"
+      });
+  } catch (error) {
+      console.error("Error unfollowing user:", error);
+      res.status(500).json({
+          message: "Failed to unfollow user",
+          error: error.message
+      });
+  }
+}

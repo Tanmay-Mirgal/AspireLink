@@ -18,7 +18,7 @@ const MinimalistSidebar = () => {
   const navItems = [
     { icon: <Search />, key: "search", path: "/search" },
     { icon: <Home />, key: "home", path: "/" },
-    { icon: <Users />, key: "users", path: "/users" },
+    { icon: <Users />, key: "users", path: "/feed" },
     { icon: <Settings />, key: "settings", path: "/settings" },
     { icon: <Send />, key: "login", path: "/login" },
     { icon: <Cloud />, key: "signup", path: "/signup" },

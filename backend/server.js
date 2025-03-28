@@ -8,6 +8,7 @@ import mentorRoutes from "./routes/mentor.routes.js";
 import studentRoutes from "./routes/student.routes.js";
 import meetingRoutes from "./routes/meeting.routes.js";
 import forumRoutes from "./routes/forum.routes.js";
+import postRoutes from "./routes/post.routes.js"
 import cookieParser from "cookie-parser";
 const app = express();
 dotenv.config();
@@ -29,7 +30,8 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/mentor",mentorRoutes)
 app.use("/api/student",studentRoutes)
 app.use("/api/meetings",meetingRoutes)
-app.use("/api/forums",forumRoutes)
+app.use("/api/forums",forumRoutes);
+app.use('/api/posts',postRoutes);
 
 app.listen(process.env.PORT, () => {
   connectDB();
