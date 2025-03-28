@@ -1,3 +1,4 @@
+// Updated JobDetail component with apply functionality and fixed logic
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -8,51 +9,92 @@ import {
   MapPin,
   Briefcase,
   Code,
-  CheckCircle2
+  CheckCircle2,
+  CheckCircle
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { axiosInstance } from '@/lib/axios';
 import { toast } from 'react-hot-toast';
+import useJobStore from '@/store/useJobStore';
+import { axiosInstance } from '@/lib/axios';
 
 const JobDetail = () => {
   const { jobId } = useParams();
   const navigate = useNavigate();
-  const [job, setJob] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  
+  const { 
+    currentJob, 
+    isLoading, 
+    error, 
+    fetchJobById, 
+    clearCurrentJob 
+  } = useJobStore();
+  
+  const [isApplying, setIsApplying] = useState(false);
+  const [hasApplied, setHasApplied] = useState(false);
+  const [user, setUser] = useState(null);
 
+  // Fetch job data and user info
   useEffect(() => {
-    const fetchJobData = async () => {
-      setIsLoading(true);
-      setError(null);
-      
-      try {
-        console.log('Fetching job with ID:', jobId);
-        const response = await axiosInstance.get(`/jobs/get-job-by-id/${jobId}`);
-        console.log('Job data response:', response.data);
-        
-        if (response.data.success && response.data.job) {
-          setJob(response.data.job);
-        } else {
-          setError('Could not find job details');
-        }
-      } catch (err) {
-        console.error('Error fetching job:', err);
-        setError(err.response?.data?.message || 'Failed to load job details');
-        toast.error('Failed to load job details');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    if (jobId) {
-      fetchJobData();
+    // Get user from localStorage
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
     }
-  }, [jobId]);
+    
+    if (jobId) {
+      fetchJobById(jobId);
+    }
+    
+    return () => {
+      clearCurrentJob();
+    };
+  }, [jobId, fetchJobById, clearCurrentJob]);
+
+  // Check if the current user has already applied
+  useEffect(() => {
+    if (currentJob && user) {
+      // Check if the user's ID is in the appliedStudents array
+      const alreadyApplied = currentJob.appliedStudents?.some(
+        studentId => studentId === user._id
+      );
+      setHasApplied(alreadyApplied);
+    }
+  }, [currentJob, user]);
+
+  const handleApply = async () => {
+    // Don't allow application if user has already applied
+    if (hasApplied) {
+      toast.error('You have already applied for this job');
+      return;
+    }
+
+    if (!user) {
+      toast.error('Please login to apply for this job');
+      return;
+    }
+
+    if (user.role !== 'student') {
+      toast.error('Only students can apply for jobs');
+      return;
+    }
+
+    setIsApplying(true);
+    try {
+      await axiosInstance.post(`/jobs/apply/${jobId}`);
+      
+      toast.success('Successfully applied for job. A meeting request has been sent to the mentor.');
+      setHasApplied(true);
+    } catch (error) {
+      console.error('Error applying for job:', error);
+      toast.error(error.response?.data?.message || 'Failed to apply for job');
+    } finally {
+      setIsApplying(false);
+    }
+  };
 
   // Loading State
   if (isLoading) {
@@ -75,7 +117,7 @@ const JobDetail = () => {
   }
 
   // Error State
-  if (error || !job) {
+  if (error || !currentJob) {
     return (
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <Button 
@@ -106,6 +148,61 @@ const JobDetail = () => {
     );
   }
 
+  const job = currentJob;
+
+  // Render application button based on user status
+  const renderApplicationButton = () => {
+    // If user has already applied
+    if (hasApplied) {
+      return (
+        <Button 
+          size="lg" 
+          variant="outline"
+          className="bg-green-50 border-green-200 text-green-700 hover:bg-green-50 hover:text-green-700 cursor-default"
+          disabled
+        >
+          <CheckCircle className="h-5 w-5 mr-2" />
+          Application Submitted
+        </Button>
+      );
+    }
+    
+    // If user is not a student
+    if (user?.role !== 'student') {
+      return (
+        <Button 
+          size="lg" 
+          className="rounded-full opacity-70"
+          disabled
+          title="Only students can apply for jobs"
+        >
+          Apply Now
+        </Button>
+      );
+    }
+    
+    // Default - user is a student and hasn't applied yet
+    return (
+      <Button 
+        size="lg" 
+        className="rounded-full"
+        onClick={handleApply}
+        disabled={isApplying || hasApplied}
+      >
+        {isApplying ? (
+          <>
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            Applying...
+          </>
+        ) : hasApplied ? (
+          'Application Submitted'
+        ) : (
+          'Apply Now'
+        )}
+      </Button>
+    );
+  };
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <Button 
@@ -131,7 +228,7 @@ const JobDetail = () => {
                   </div>
                 )}
                 {job.jobLocation && (
-                  <div className="flex items-center">
+                  <div className="flex items-center ml-3">
                     <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
                     <span>{job.jobLocation}</span>
                   </div>
@@ -198,10 +295,15 @@ const JobDetail = () => {
             <div className="text-sm text-muted-foreground">
               Applicants so far: {job.appliedStudents?.length || 0}
             </div>
-            <Button size="lg" className="rounded-full">
-              Apply Now
-            </Button>
+            
+            {renderApplicationButton()}
           </section>
+          
+          {user?.role !== 'student' && !hasApplied && (
+            <p className="text-sm text-muted-foreground text-center">
+              Note: Only students can apply for job positions
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>

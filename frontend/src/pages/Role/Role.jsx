@@ -50,7 +50,7 @@ const RoleSelectionPage = () => {
       const updatedUser = await setRole(selectedRole);
       
       // Navigate based on selected role
-      navigate(`/${user.role}-complete-profile`);
+      navigate(`/${updatedUser.role}-complete-profile`);
       
       toast.success(`Welcome as a ${selectedRole}!`);
     } catch (error) {

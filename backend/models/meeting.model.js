@@ -29,7 +29,22 @@ const meetingSchema = new mongoose.Schema({
     type:String,
     default:"pending",
     enum:["pending","started","finished"]
-  }
+  },
+  meetingRequests:[
+    {
+      user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User",
+        required:true
+      },
+      status:{
+        type:String,
+        default:"pending",
+        enum:["pending","accepted","rejected"]
+      },
+      
+    }
+  ]
 });
 
 const Meeting = mongoose.model("Meeting", meetingSchema);

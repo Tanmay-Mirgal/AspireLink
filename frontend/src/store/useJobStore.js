@@ -56,7 +56,7 @@ const useJobStore = create((set, get) => ({
   applyForJob: async (jobId) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await axiosInstance.post(`/jobs/apply/${jobId}`);
+      const response = await axiosInstance.post(`/jobs/${jobId}/apply`);
       
       // Update current job if it's loaded
       if (get().currentJob && get().currentJob._id === jobId) {
