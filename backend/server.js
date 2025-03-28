@@ -11,6 +11,7 @@ import meetingRoutes from "./routes/meeting.routes.js";
 import forumRoutes from "./routes/forum.routes.js";
 import postRoutes from "./routes/post.routes.js";
 import jobRoutes from "./routes/job.routes.js"
+import projectRoutes from "./routes/project.routes.js";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import { Server } from "socket.io";
@@ -59,7 +60,8 @@ app.use("/api/student", studentRoutes);
 app.use("/api/meetings", meetingRoutes);
 app.use("/api/forums", forumRoutes);
 app.use("/api/posts", postRoutes);
-app.use("/api/jobs", jobRoutes)
+app.use("/api/jobs", jobRoutes);
+app.use("/api/projects", projectRoutes);
 
 // Socket.io event handlers
 io.on("connection", (socket) => {
