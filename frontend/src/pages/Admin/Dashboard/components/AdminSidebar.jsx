@@ -19,7 +19,7 @@ export function AdminSidebar({ activeTab, setActiveTab }) {
           <div className="rounded-full bg-primary p-1">
             <UserCheck className="h-5 w-5 text-primary-foreground" />
           </div>
-          <h1 className="text-lg font-semibold">MentorConnect</h1>
+          <h1 className="text-lg font-semibold">Admin Dashboard</h1>
         </div>
       </SidebarHeader>
       <SidebarContent>
