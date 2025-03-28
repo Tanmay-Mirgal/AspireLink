@@ -46,7 +46,6 @@ export const register = async (req, res) => {
       .json({ message: "Registration failed", error: error.message });
   }
 };
-
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -265,8 +264,6 @@ export const completeProfile = async (req, res) => {
         .json({ message: "Failed to update profile", error: error.message });
     }
 };
-
-
 export const followUser = async (req, res) => {
   try {
       const currentUserId = req.user.id; // Authenticated user
@@ -310,7 +307,6 @@ export const followUser = async (req, res) => {
       });
   }
 }
-
 export const unfollowUser = async (req, res) => {
   try {
       const currentUserId = req.user.id; // Authenticated user
@@ -352,5 +348,17 @@ export const unfollowUser = async (req, res) => {
           message: "Failed to unfollow user",
           error: error.message
       });
+  }
+}
+export const getUserById = async (req,res) => {
+  try {
+    
+  } catch (error) {
+    console.error("Get user by id error:", error);
+    res.status(500).json({
+        message: "Failed to get user",
+        error: error.message
+    });
+    
   }
 }
