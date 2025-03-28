@@ -1,53 +1,58 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Loader2 } from 'lucide-react';
 
-// Placeholder for connections data type
+// Hooks and Stores
+import { useAuthStore } from '@/store/useAuthStore';
 
+export const NetworkSidebar = () => {
+  const navigate = useNavigate();
+  const { 
+    fetchRandomUsers, 
+    isLoading: usersLoading, 
+    error: usersError 
+  } = useAuthStore();
 
-// Placeholder connections data
-const defaultConnections = [
-  { 
-    id: '1', 
-    name: 'Dr. Emily Chen', 
-    status: 'online',
-    profilePic: undefined 
-  },
-  { 
-    id: '2', 
-    name: 'Dr. Michael Rodriguez', 
-    status: 'offline',
-    profilePic: undefined 
-  },
-  { 
-    id: '3', 
-    name: 'Sarah Johnson', 
-    status: 'online',
-    profilePic: undefined 
-  },
-  { 
-    id: '4', 
-    name: 'Alex Patel', 
-    status: 'offline',
-    profilePic: undefined 
-  },
-  { 
-    id: '5', 
-    name: 'Dr. Lisa Wong', 
-    status: 'online',
-    profilePic: undefined 
-  }
-];
-
-export const NetworkSidebar= () => {
-  const [connections] = useState(defaultConnections);
+  const [connections, setConnections] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // Fetch random users on component mount
+  useEffect(() => {
+    const loadRandomUsers = async () => {
+      try {
+        const users = await fetchRandomUsers();
+        setConnections(users);
+      } catch (error) {
+        console.error('Failed to fetch random users', error);
+      }
+    };
+
+    loadRandomUsers();
+  }, []);
 
   // Filter connections based on search term
   const filteredConnections = connections.filter(connection => 
-    connection.name.toLowerCase().includes(searchTerm.toLowerCase())
+    `${connection.fullName.firstName} ${connection.fullName.lastName}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
   );
+
+  // Helper to get full name
+  const getFullName = (connection) => 
+    `${connection.fullName.firstName} ${connection.fullName.lastName}`.trim();
+
+  // Helper to get initials
+  const getInitials = (connection) => 
+    `${connection.fullName.firstName.charAt(0)}${connection.fullName.lastName.charAt(0)}`.toUpperCase();
+
+  // Handle user profile navigation
+  const handleUserProfileClick = (userId) => {
+    navigate(`/profile/${userId}`);
+  };
 
   return (
     <Card className="w-full">
@@ -61,27 +66,54 @@ export const NetworkSidebar= () => {
         />
       </CardHeader>
       <CardContent>
-        {filteredConnections.length > 0 ? (
+        {usersLoading ? (
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map((_, index) => (
+              <div key={index} className="flex items-center space-x-3">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="space-y-2 flex-grow">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-3 w-1/2" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : usersError ? (
+          <p className="text-center text-red-500">
+            Failed to load connections: {usersError}
+          </p>
+        ) : filteredConnections.length > 0 ? (
           filteredConnections.map((connection) => (
             <div 
-              key={connection.id} 
+              key={connection._id} 
               className="flex items-center justify-between mb-2 hover:bg-muted/50 p-2 rounded-md transition-colors cursor-pointer"
+              onClick={() => handleUserProfileClick(connection._id)}
             >
               <div className="flex items-center space-x-3">
                 <Avatar>
-                  <AvatarFallback>
-                    {connection.name.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
+                  {connection.profilePic ? (
+                    <AvatarImage 
+                      src={connection.profilePic} 
+                      alt={getFullName(connection)} 
+                    />
+                  ) : (
+                    <AvatarFallback>
+                      {getInitials(connection)}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
-                <p className="font-medium">{connection.name}</p>
+                <div>
+                  <p className="font-medium">{getFullName(connection)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {connection.role || 'Medical Professional'}
+                  </p>
+                </div>
               </div>
               <div 
                 className={`w-2 h-2 rounded-full ${
-                  connection.status === 'online' 
-                    ? 'bg-green-500' 
-                    : 'bg-muted-foreground'
+                  Math.random() > 0.5 ? 'bg-green-500' : 'bg-muted-foreground'
                 }`}
-                title={connection.status}
+                title={Math.random() > 0.5 ? 'Online' : 'Offline'}
               />
             </div>
           ))
