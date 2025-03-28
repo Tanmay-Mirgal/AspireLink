@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { 
   Menu, 
   Home, 
@@ -9,15 +9,31 @@ import {
   ChevronDown,
   X,
   LogIn,
-  UserPlus
+  UserPlus,
+  LogOut
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import LanguageSelector from "../../pages/LanguageSelector"; // adjust the path as needed
 
 const ModernNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
- const user = JSON.parse(localStorage.getItem('user'));
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
+
+  // Fetch user from localStorage
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  };
 
   // Navigation items
   const navItems = [
@@ -34,25 +50,25 @@ const ModernNavbar = () => {
   };
 
   return (
-    <header className="top-0 z-50 w-full border-b bg-black text-white shadow-md">
+    <header className="top-0 h-[80px] py-2 z-50 w-full border-b bg-black text-white shadow-md">
       <div className="flex justify-between h-16 items-center px-5">
         {/* Logo */}
         <div className="flex items-center gap-2 mr-8">
           <Cloud className="h-6 w-6 text-primary" />
-          <span className="hidden text-white font-bold text-xl sm:inline-block">
-           TreeTex
-          </span>
+          <Link to={"/"} className="hidden text-white font-bold text-xl sm:inline-block">
+            TreeTex
+          </Link>
         </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex flex-1 items-center gap-1">
-          {navItems.map((item) => (
+          {user && navItems.map((item) => (
             <Link
               key={item.key}
               to={item.path}
               className={`
                 relative flex items-center gap-2 px-3 py-2 text-sm 
-                 text-white
+                text-white
               `}
             >
               {item.icon}
@@ -64,23 +80,44 @@ const ModernNavbar = () => {
         {/* Desktop Right Section */}
         <div className="hidden md:flex items-center gap-4">
           <LanguageSelector />
-
+        {user &&   <button
+            onClick={() => user.role === "student" ? navigate("/student-dashboard") : navigate("/mentor-dashboard")}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary-dark"
+          >
+            <Users className="h-4 w-4" />
+            {user.role === "student" ? "Student Dashboard" : "Mentor Dashboard"}
+          </button>}
           <div className="h-6 w-px bg-gray-300" />
 
-          <Link 
-            to="/login"
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary-700"
-          >
-            <LogIn className="h-4 w-4" />
-            <span>Sign In</span>
-          </Link>
-          <Link 
-            to="/signup"
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary-700"
-          >
-            <UserPlus className="h-4 w-4" />
-            <span>Sign Up</span>
-          </Link>
+          {user ? (
+            <>
+              <span className="text-sm text-white">Hello, {user.fullName.firstName} {user.fullName.lastName}</span>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary-700"
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Sign In</span>
+              </Link>
+              <Link
+                to="/signup"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary-700"
+              >
+                <UserPlus className="h-4 w-4" />
+                <span>Sign Up</span>
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile Menu Trigger */}
@@ -108,15 +145,38 @@ const ModernNavbar = () => {
               </Link>
             ))}
 
-            {/* Mobile Sign In */}
-            <Link 
-              to="/login"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="flex items-center gap-4 px-5 py-3 border-b text-gray-600 hover:bg-gray-50"
-            >
-              <Send className="h-4 w-4" />
-              <span>Sign In</span>
-            </Link>
+            {/* Mobile User Section */}
+            {user ? (
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  handleLogout();
+                }}
+                className="flex items-center gap-4 px-5 py-3 border-b text-gray-600 hover:bg-gray-50"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Logout</span>
+              </button>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-4 px-5 py-3 border-b text-gray-600 hover:bg-gray-50"
+                >
+                  <LogIn className="h-4 w-4" />
+                  <span>Sign In</span>
+                </Link>
+                <Link
+                  to="/signup"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-4 px-5 py-3 border-b text-gray-600 hover:bg-gray-50"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  <span>Sign Up</span>
+                </Link>
+              </>
+            )}
 
             {/* Mobile Language Selector */}
             <div className="px-5 py-3 border-b">

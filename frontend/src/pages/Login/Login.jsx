@@ -75,7 +75,6 @@ const LoginPage = () => {
 
   return (
     <>
-    <MinimalistSidebar/>
     
     <div className="flex min-h-screen w-full">
        

@@ -62,7 +62,7 @@ const SignupPage = () => {
 
   return (
     <>
-        <MinimalistSidebar/>
+   
     <div className="flex min-h-screen w-full">
       {/* Left side - Signup form */}
       <div className="flex w-full md:w-1/2 flex-col items-start justify-center px-8 md:px-12 lg:px-16 ml-6">
