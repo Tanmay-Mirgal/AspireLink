@@ -8,6 +8,8 @@ import { ProgressTab } from "./ProgressTab"
 import { useStudentStore } from "@/store/useStudentStore"
 import ResumeAnalyzer from "./ResumeAnalyzer"
 
+import EligibilityDashboard from "./Eligibility-components/EligibilityDashboard"
+
 export function DashboardTabs() {
   // Get state and actions directly from the store
   const {
@@ -31,7 +33,7 @@ export function DashboardTabs() {
   ]
  return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-      <TabsList className="grid w-full grid-cols-7">
+      <TabsList className="grid w-full grid-cols-8">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="mentors">Mentors</TabsTrigger>
         <TabsTrigger value="skills">Skills</TabsTrigger>
@@ -39,6 +41,7 @@ export function DashboardTabs() {
         <TabsTrigger value="posts">Posts</TabsTrigger>
         <TabsTrigger value="progress">Progress</TabsTrigger>
         <TabsTrigger value="Resume">Resume Analyzer</TabsTrigger>
+        <TabsTrigger value="eligibility">Job Eligibility</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview" className="space-y-6">
@@ -79,6 +82,9 @@ export function DashboardTabs() {
       </TabsContent>
       <TabsContent value="Resume" className="space-y-6">
         <ResumeAnalyzer/>
+      </TabsContent>
+      <TabsContent value="eligibility" className="space-y-6">
+        <EligibilityDashboard/>
       </TabsContent>
     </Tabs>
   )

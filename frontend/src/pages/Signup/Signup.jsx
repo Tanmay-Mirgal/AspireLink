@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import MinimalistSidebar from '@/components/sidebar/ModernNavbar';
 
@@ -50,8 +50,8 @@ const SignupPage = () => {
       const { firstName, lastName, email, password } = formData;
       const user = await signup({ firstName, lastName, email, password });
       
-      // Optional: Navigate to dashboard or profile page after signup
       navigate('/role');
+      window.location.reload()
     } catch (error) {
       // Error handling is done in the signup function via toast
       console.error('Signup error:', error);
@@ -188,7 +188,7 @@ const SignupPage = () => {
             </Button>
             
             <div className="text-center text-sm text-gray-500 mt-4">
-              Already have an account? <a href="/login" className="text-blue-600 hover:underline">Log in</a>
+              Already have an account? <Link to="/login" className="text-blue-600 hover:underline">Log in</Link>
             </div>
           </form>
         </div>

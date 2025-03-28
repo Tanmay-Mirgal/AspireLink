@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import MinimalistSidebar from '../../components/sidebar/ModernNavbar'
 
@@ -184,7 +184,7 @@ const LoginPage = () => {
             </Button>
             
             <div className="text-center text-sm text-gray-500 mt-4">
-              Don't have an account? <a href="/signup" className="text-blue-600 hover:underline">Create an account</a>
+              Don't have an account? <Link to="/signup" className="text-blue-600 hover:underline">Create an account</Link>
             </div>
           </form>
         </div>

@@ -30,7 +30,7 @@ router.get("/jobs/:jobId/applications",mentorRole, getJobApplications);
 router.get("/mentor-job",mentorRole, getMentorJobs);
 
 // Student routes
-router.post("/:jobId/apply", studentRole, applyForJob);
+router.post("/apply/:jobId", studentRole, applyForJob);
 router.get("/student/applications", studentRole, getStudentApplications);
 
 export default router;

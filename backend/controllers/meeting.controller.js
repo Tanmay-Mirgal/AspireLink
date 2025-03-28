@@ -1,7 +1,10 @@
 import Meeting from "../models/meeting.model.js";
 import { User } from "../models/user.model.js";
 import crypto from "crypto";
-import { meetingCreatedEmail } from "../templates/emailTemplates.js";
+import {
+  jobAppliedAcceptedAndScheduledMeeting,
+  meetingCreatedEmail,
+} from "../templates/emailTemplates.js";
 import { sendMail } from "../utils/utility.js";
 
 export const createMeeting = async (req, res) => {
@@ -339,7 +342,7 @@ export const respondToMeetingRequest = async (req, res) => {
     const meeting = await Meeting.findOne({
       _id: meetingId,
       mentorId,
-    });
+    }).populate("meetingRequests.user", "email fullName");
 
     if (!meeting) {
       return res.status(404).json({
@@ -365,21 +368,24 @@ export const respondToMeetingRequest = async (req, res) => {
 
     // If accepting, also add the student to the studentId array if not already there
     if (action === "accepted") {
-      const studentId = meeting.meetingRequests[requestIndex].user;
+      const studentId = meeting.meetingRequests[requestIndex].user._id;
 
       // Check if the student is already in the studentId array
       if (!meeting.studentId.includes(studentId)) {
         meeting.studentId.push(studentId);
       }
     }
-
     await meeting.save();
-    const info = await sendMail({
-      to: meeting.meetingRequests[requestIndex].user.email,
+
+    const studentEmail = meeting.meetingRequests[requestIndex].user.email;
+    console.log("Student email:", studentEmail);
+     const info = await sendMail({
+      to: studentEmail,
       subject: `Meeting Request ${
         action.charAt(0).toUpperCase() + action.slice(1)
       }`,
       html: jobAppliedAcceptedAndScheduledMeeting({
+        
         studentName: meeting.meetingRequests[requestIndex].user.fullName,
         action,
         date: meeting.date,

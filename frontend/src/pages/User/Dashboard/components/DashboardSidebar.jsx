@@ -96,6 +96,15 @@ import {
                 <span>Resume Analyzer</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton 
+                isActive={activeTab === "eligibility"} 
+                onClick={() => setActiveTab("eligibility")}
+              >
+                <PieChart />
+                <span>Job Eligibility</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
         <SidebarFooter className="border-t p-6">

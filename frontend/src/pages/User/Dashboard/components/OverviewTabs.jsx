@@ -38,7 +38,7 @@ function StudentProfileCard({ studentProfile }) {
           <div>
             <CardTitle className="text-2xl">{user.fullName.firstName + " " + user.fullName.lastName} </CardTitle>
             <CardDescription>
-              {user.studentProfile.skills[0].name} • Joined {user.createdAt.split("T")[0]}
+              {user.skills[0].name} • Joined {user.createdAt.split("T")[0]}
             </CardDescription>
           </div>
           <div className="flex gap-2">

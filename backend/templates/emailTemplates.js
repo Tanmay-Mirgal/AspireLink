@@ -109,7 +109,7 @@ export const jobAppliedAcceptedAndScheduledMeeting = ({ studentName, action, dat
           <h1>Your Job Application Has Been ${action.charAt(0).toUpperCase() + action.slice(1)}!</h1>
       </div>
   
-      <p>Dear ${studentName},</p>
+      <p>Dear ${studentName.firstName +" "+ studentName.lastName},</p>
   
       <p>Congratulations! We're pleased to inform you that your job application has been ${action}.</p>
   
