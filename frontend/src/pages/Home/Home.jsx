@@ -1,5 +1,5 @@
 import LandingPage from '@/components/landingpage/LandingPage';
-import MinimalistSidebar from '@/components/sidebar/MinimalistSidebar';
+import MinimalistSidebar from '@/components/sidebar/ModernNavbar';
 
 import React from 'react';
 
@@ -9,8 +9,7 @@ function Home() {
         <>
        
         <div className="flex">
-            <MinimalistSidebar/>
-            <main className="flex-grow ml-16">
+            <main className="flex-grow">
                 <LandingPage />
             </main>
         </div>

@@ -6,7 +6,7 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import MinimalistSidebar from '../../components/sidebar/MinimalistSidebar'
+import MinimalistSidebar from '../../components/sidebar/ModernNavbar'
 
 const LoginPage = () => {
   const [showPassword, setShowPassword] = useState(false);

@@ -6,16 +6,22 @@ export const createProject = async (req, res) => {
         const { 
             title, 
             description, 
-            mentorId, 
             studentId, 
             gitRepoLink, 
             technologies 
         } = req.body;
 
         // Validate input
-        if (!title || !description || !mentorId) {
+        if (!title || !description) {
             return res.status(400).json({
-                message: "Title, description, and mentor are required"
+                message: "Title and description are required"
+            });
+        }
+
+        // Verify if user is mentor
+        if (req.user.role !== 'mentor') {
+            return res.status(403).json({
+                message: "Only mentors can create projects"
             });
         }
 
@@ -23,7 +29,7 @@ export const createProject = async (req, res) => {
         const newProject = new Project({
             title,
             description,
-            mentorId,
+            mentorId: req.user._id,
             studentId: studentId || [],
             gitRepoLink: gitRepoLink || '',
             technologies: technologies || [],
@@ -74,7 +80,7 @@ export const getAllProject = async (req, res) => {
 export const getProjectById = async (req,res) => {
     try {
         const projectId = req.params.projectId;
-        const project = await Project.findById(projectId).populate('mentorId', 'name email').populate('studentId', 'name email');
+        const project = await Project.findById(projectId).populate('mentorId', 'fullName.firstName fullName.lastName email').populate('studentId', 'name email');
         if (!project) {
             return res.status(404).json({
                 message: "Project not found"

@@ -16,11 +16,15 @@ import Forum from './pages/Forum/Forums';
 import { ForumDetail } from './pages/Forum/ForumDetail';
 import JoinPage from './pages/Meeting/JoinPage';
 import MeetingPage from './pages/Meeting/Meeting';
+import ModernNavbar from './components/sidebar/ModernNavbar';
+
+import ProjectsPage from './pages/Projects/ProjectsPage';
+import ProjectDetailsPage from './pages/Projects/ProjectDetailsPage';
 
 function App() {
   return (
     <>
-      {/* <MinimalistSidebar/> */}
+     <ModernNavbar />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
@@ -37,6 +41,9 @@ function App() {
         {/* Fixed Meeting Routes */}
         <Route path="/meeting" element={<JoinPage />} />
         <Route path="/meeting/:roomId" element={<MeetingPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/project/:id" element={<ProjectDetailsPage />} />
+
         
         <Route path="/mentor-dashboard" element={<MentorDashboard />} />
         <Route path="/student-dashboard" element={<StudentDashboard />} />
