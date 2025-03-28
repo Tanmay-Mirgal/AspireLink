@@ -111,7 +111,7 @@ function LearningProgressCard({ studentProfile, progressData,user }) {
             <div className="flex justify-between mb-6">
               <div className="text-center p-4 bg-green-50 rounded-lg">
                 <p className="text-sm text-gray-500">Completion</p>
-                <p className="text-2xl font-bold text-green-600">{user.skills[0].proficiency}%</p>
+                <p className="text-2xl font-bold text-green-600">{user.studentProfile.skills[0].proficiency}%</p>
                 <p className="text-xs text-gray-500">{completedModules} of {totalModules} modules</p>
               </div>
               <div className="text-center p-4 bg-blue-50 rounded-lg">
