@@ -1,6 +1,7 @@
 import Forum from "../models/forum.model.js";
 import { User } from "../models/user.model.js";
 import { io } from "../server.js"; // Import the io instance
+import { uploadToCloudinary } from "../utils/utility.js";
 
 export const createForum = async (req, res) => {
   try {
@@ -117,6 +118,7 @@ export const addMessageToForum = async (req, res) => {
     const forumId = req.params.id;
     const userId = req.user._id;
     const { content } = req.body;
+    const {image} = req.files || {};
 
     const user = await User.findById(userId);
     if (!user) {
@@ -141,9 +143,15 @@ export const addMessageToForum = async (req, res) => {
       return res.status(400).json({ message: "Message content is required" });
     }
 
+    let imageUrl = null;
+    if (image) {
+      imageUrl = await uploadToCloudinary(image.tempFilePath)
+    }
+
     const newMessage = {
       sender: userId,
       content: content.trim(),
+      image: imageUrl,
       timestamp: new Date(),
     };
 

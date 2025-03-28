@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useCallback, useRef } from "react"
 import { useParams } from "react-router-dom"
-import { Users, MessageCircle, UserPlus, ChevronLeft, Send, Loader2, ArrowLeft, Info } from "lucide-react"
+import { Users, MessageCircle, UserPlus, ChevronLeft, Send, Loader2, ArrowLeft, Info, Image,X } from "lucide-react"
 import { useForumStore } from "@/store/useFormStore"
 import { connectSocket, disconnectSocket, onReceiveMessage, offReceiveMessage } from "@/lib/socket"
 
@@ -95,6 +95,20 @@ const Message = React.memo(({ message, isCurrentUser }) => {
           </span>
         </div>
         <p className="break-words">{message.content || ""}</p>
+        
+        {/* Display image if present */}
+        {message.image && (
+          <div className="mt-2 rounded-md overflow-hidden">
+            <img 
+              src={message.image} 
+              alt="Message attachment" 
+              className="max-w-full h-auto object-cover"
+              onClick={() => window.open(message.image, '_blank')}
+              style={{ cursor: 'pointer' }}
+            />
+          </div>
+        )}
+        
         <span
           className={`text-xs ${isCurrentUser ? "text-primary-foreground/70" : "text-muted-foreground"} block text-right mt-1`}
         >
@@ -111,35 +125,101 @@ const Message = React.memo(({ message, isCurrentUser }) => {
     </div>
   );
 });
-
 // Enhanced Message Input Component with localized loading
+// Enhanced Message Input Component with image upload
 const MessageInput = ({ forumId, sendMessage }) => {
-  const [message, setMessage] = useState("")
-  const [isSending, setIsSending] = useState(false)
+  const [message, setMessage] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please select a valid image file (JPEG, PNG, GIF, WEBP)');
+      return;
+    }
+    
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image size should be less than 5MB');
+      return;
+    }
+    
+    setImageFile(file);
+    
+    // Create a preview
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+  };
+  
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   const handleSend = useCallback(async () => {
-    if (message.trim()) {
-      setIsSending(true)
-      try {
-        await sendMessage(forumId, message)
-        setMessage("")
-      } catch (error) {
-        console.error("Failed to send message:", error)
-      } finally {
-        setIsSending(false)
+    if (!message.trim() && !imageFile) return;
+    
+    setIsSending(true);
+    try {
+      // Create form data for the API request
+      const formData = new FormData();
+      formData.append('content', message.trim());
+      
+      if (imageFile) {
+        formData.append('image', imageFile);
       }
+      
+      await sendMessage(forumId, formData);
+      setMessage("");
+      setImageFile(null);
+      setImagePreview(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    } finally {
+      setIsSending(false);
     }
-  }, [forumId, message, sendMessage])
+  }, [forumId, message, imageFile, sendMessage]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault()
-      handleSend()
+      e.preventDefault();
+      handleSend();
     }
-  }
+  };
 
   return (
     <div className="p-4 bg-card border-t">
+      {/* Image preview */}
+      {imagePreview && (
+        <div className="mb-2 relative">
+          <div className="relative rounded-md overflow-hidden border border-input inline-block">
+            <img src={imagePreview} alt="Preview" className="h-20 object-cover" />
+            <button 
+              onClick={removeImage}
+              className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 hover:bg-black/90"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+      )}
+      
       <div className="flex items-center gap-2">
         <textarea
           className="flex-1 min-h-[44px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
@@ -150,13 +230,47 @@ const MessageInput = ({ forumId, sendMessage }) => {
           rows="1"
           disabled={isSending}
         />
-        <Button onClick={handleSend} disabled={!message.trim() || isSending} size="icon">
+        
+        {/* Image upload button */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="icon" 
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isSending}
+              >
+                <Image size={18} />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  className="hidden"
+                  onChange={handleImageChange}
+                  disabled={isSending}
+                />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              Add an image
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        
+        {/* Send button */}
+        <Button 
+          onClick={handleSend} 
+          disabled={(!message.trim() && !imageFile) || isSending} 
+          size="icon"
+        >
           {isSending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
         </Button>
       </div>
     </div>
-  )
-}
+  );
+};
 
 // Main Forum Component
 export const ForumDetail = () => {
@@ -304,7 +418,7 @@ export const ForumDetail = () => {
             <p className="text-muted-foreground mb-6 text-center">{error}</p>
             <div className="flex gap-4">
               <Button variant="outline" asChild>
-                <Link to="/forums">Go Back</Link>
+                <Link to="/forum">Go Back</Link>
               </Button>
               <Button onClick={() => fetchForumById(id)}>Try Again</Button>
             </div>
