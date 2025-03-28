@@ -20,6 +20,8 @@ import ModernNavbar from './components/sidebar/ModernNavbar';
 
 import ProjectsPage from './pages/Projects/ProjectsPage';
 import ProjectDetailsPage from './pages/Projects/ProjectDetailsPage';
+import JobDetail from './pages/JobDetails/JobDetails';
+import UserDetailProfilePage from './pages/Profile/UserDetailProfilePage ';
 
 function App() {
   return (
@@ -34,9 +36,11 @@ function App() {
         <Route path="/student-complete-profile" element={<StudentCompleteProfile />} />
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/:userId" element={<UserDetailProfilePage />} />
         <Route path="/feed" element={<Feed />} />
         <Route path="/forum" element={<Forum />} />
         <Route path="/forum/:id" element={<ForumDetail />} />
+        <Route path="/job/:jobId" element={<JobDetail />} />
         
         {/* Fixed Meeting Routes */}
         <Route path="/meeting" element={<JoinPage />} />

@@ -211,5 +211,65 @@ export const useAuthStore = create((set,get) => ({
       toast.error(errorMessage);
       throw error;
     }
+  },
+
+
+
+  fetchRandomUsers: async () => {
+    try {
+      set({ isLoading: true });
+      
+      const response = await axiosInstance.get('/auth/get-random-users');
+      const randomUsers = response.data;
+      
+      set({
+        isLoading: false,
+        isError: false,
+        randomUsers
+      });
+      
+      return randomUsers;
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error?.response?.data?.message || 'Failed to fetch random users';
+      
+      set({ 
+        isError: true, 
+        error: errorMessage, 
+        isLoading: false 
+      });
+      
+      toast.error(errorMessage);
+      throw error;
+    }
+  },
+
+  // Fetch user by ID (if needed)
+  fetchUserById: async (userId) => {
+    try {
+      set({ isLoading: true });
+      
+      const response = await axiosInstance.get(`/auth/get-profile/${userId}`);
+      const user = response.data;
+      
+      set({
+        isLoading: false,
+        isError: false
+      });
+      
+      return user;
+    } catch (error) {
+      console.error(error);
+      const errorMessage = error?.response?.data?.message || 'Failed to fetch user profile';
+      
+      set({ 
+        isError: true, 
+        error: errorMessage, 
+        isLoading: false 
+      });
+      
+      toast.error(errorMessage);
+      throw error;
+    }
   }
 }));
