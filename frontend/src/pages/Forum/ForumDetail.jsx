@@ -54,15 +54,30 @@ const MembersSidebar = ({ members, isCollapsed, toggleSidebar }) => (
 
 // Message Component
 const Message = React.memo(({ message, isCurrentUser }) => {
-  const messageTime = new Date(message.timestamp)
-  const formattedTime = messageTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-  const formattedDate = messageTime.toLocaleDateString()
+  // Ensure the message has the expected properties before accessing them
+  if (!message || !message.sender || !message.sender.fullName) {
+    console.error("Invalid message structure:", message);
+    return null; // Return null for invalid messages
+  }
+
+  // Make sure the timestamp exists and is a valid date
+  const messageTime = message.timestamp ? new Date(message.timestamp) : new Date();
+  const formattedTime = messageTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  const formattedDate = messageTime.toLocaleDateString();
+
+  // Safely access the sender's name
+  const senderFirstName = message.sender.fullName && message.sender.fullName.firstName 
+    ? message.sender.fullName.firstName 
+    : "User";
+
+  // Safely get the first character for the avatar
+  const avatarChar = senderFirstName.charAt(0) || "?";
 
   return (
     <div className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} mb-4`}>
       {!isCurrentUser && (
         <Avatar className="h-8 w-8 mr-2 mt-1">
-          <AvatarFallback>{message.sender.fullName.firstName.charAt(0)}</AvatarFallback>
+          <AvatarFallback>{avatarChar}</AvatarFallback>
         </Avatar>
       )}
       <div
@@ -73,13 +88,13 @@ const Message = React.memo(({ message, isCurrentUser }) => {
       >
         <div className="flex justify-between items-start mb-1">
           <span className={`text-sm font-medium ${isCurrentUser ? "text-primary-foreground/90" : ""}`}>
-            {isCurrentUser ? "You" : message.sender.fullName.firstName}
+            {isCurrentUser ? "You" : senderFirstName}
           </span>
           <span className={`text-xs ${isCurrentUser ? "text-primary-foreground/70" : "text-muted-foreground"} ml-2`}>
             {formattedTime}
           </span>
         </div>
-        <p className="break-words">{message.content}</p>
+        <p className="break-words">{message.content || ""}</p>
         <span
           className={`text-xs ${isCurrentUser ? "text-primary-foreground/70" : "text-muted-foreground"} block text-right mt-1`}
         >
@@ -89,13 +104,13 @@ const Message = React.memo(({ message, isCurrentUser }) => {
       {isCurrentUser && (
         <Avatar className="h-8 w-8 ml-2 mt-1">
           <AvatarFallback className="bg-primary-foreground text-primary">
-            {message.sender.fullName.firstName.charAt(0)}
+            {avatarChar}
           </AvatarFallback>
         </Avatar>
       )}
     </div>
-  )
-})
+  );
+});
 
 // Enhanced Message Input Component with localized loading
 const MessageInput = ({ forumId, sendMessage }) => {
