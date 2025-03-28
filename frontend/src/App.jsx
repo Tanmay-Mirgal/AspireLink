@@ -8,6 +8,7 @@ import ProtectedRoute from './components/protected-route/ProtectedRoute';
 import Home from './pages/Home/Home';
 import { ForumDetail } from './pages/Forum/ForumDetail';
 import Forums from './pages/Forum/Forums';
+import ResumeBuilder from './pages/Resume/Resume';
 
 // Lazily loaded components
 const Signup = lazy(() => import('./pages/Signup/Signup'));
@@ -65,6 +66,7 @@ function App() {
           <Route path="/mentor-dashboard" element={<ProtectedRoute><MentorDashboard /></ProtectedRoute>} />
           <Route path="/student-dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
           <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
+          <Route path="/resume" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
         </Routes>
       </Suspense>
       <Toaster />
