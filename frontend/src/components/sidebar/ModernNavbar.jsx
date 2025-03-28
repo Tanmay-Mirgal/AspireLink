@@ -7,13 +7,17 @@ import {
   Users, 
   Briefcase,
   ChevronDown,
-  X
+  X,
+  LogIn,
+  UserPlus
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import LanguageSelector from "../../pages/LanguageSelector"; // adjust the path as needed
 
 const ModernNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+ const user = JSON.parse(localStorage.getItem('user'));
 
   // Navigation items
   const navItems = [
@@ -67,8 +71,15 @@ const ModernNavbar = () => {
             to="/login"
             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary-700"
           >
-            <Send className="h-4 w-4" />
+            <LogIn className="h-4 w-4" />
             <span>Sign In</span>
+          </Link>
+          <Link 
+            to="/signup"
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary-700"
+          >
+            <UserPlus className="h-4 w-4" />
+            <span>Sign Up</span>
           </Link>
         </div>
 
