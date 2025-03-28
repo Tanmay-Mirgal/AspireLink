@@ -14,13 +14,14 @@ import {
 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import LanguageSelector from "../../pages/LanguageSelector"; // adjust the path as needed
+import { useAuthStore } from "@/store/useAuthStore";
 
 const ModernNavbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const { logout} = useAuthStore()
 
-  // Fetch user from localStorage
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -28,14 +29,14 @@ const ModernNavbar = () => {
     }
   }, []);
 
-  // Logout handler
-  const handleLogout = () => {
-    localStorage.removeItem("user");
+  const handleLogout = async () => {
+    await logout()
     setUser(null);
     navigate("/login");
+    window.location.reload();
   };
 
-  // Navigation items
+
   const navItems = [
     { icon: <Home className="h-4 w-4" />, key: "home", path: "/" },
     { icon: <Menu className="h-4 w-4" />, key: "forum", path: "/forum" },
@@ -80,12 +81,20 @@ const ModernNavbar = () => {
         {/* Desktop Right Section */}
         <div className="hidden md:flex items-center gap-4">
           <LanguageSelector />
-        {user &&   <button
-            onClick={() => user.role === "student" ? navigate("/student-dashboard") : navigate("/mentor-dashboard")}
+        {user && <button
+            onClick={() => {
+              if (user.role === "student") {
+                navigate("/student-dashboard");
+              } else if (user.role === "mentor") {
+                navigate("/mentor-dashboard");
+              } else if (user.role === "admin") {
+                navigate("/admin");
+              }
+            }}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-md text-sm hover:bg-primary-dark"
           >
             <Users className="h-4 w-4" />
-            {user.role === "student" ? "Student Dashboard" : "Mentor Dashboard"}
+            {user.role === "student" ? "Student Dashboard" : user.role === "mentor" ? "Mentor Dashboard" : "Admin Dashboard"}
           </button>}
           <div className="h-6 w-px bg-gray-300" />
 

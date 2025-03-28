@@ -51,7 +51,7 @@ const LoginPage = () => {
         localStorage.removeItem('rememberedEmail');
       }
       
-      // Navigate to dashboard or profile page after login
+      window.location.reload();
       navigate('/profile');
     } catch (error) {
       // Error handling is done in the login function via toast

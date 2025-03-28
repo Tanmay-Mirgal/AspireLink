@@ -13,15 +13,11 @@ import {
 
 export function AdminSidebar({ activeTab, setActiveTab }) {
   return (
-    <Sidebar className="border-r hidden md:flex flex-col">
-      <SidebarHeader className="flex items-center px-4 py-2">
-        <div className="flex items-center gap-2">
-          <div className="rounded-full bg-primary p-1">
-            <UserCheck className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <h1 className="text-lg font-semibold">Admin Dashboard</h1>
-        </div>
-      </SidebarHeader>
+    <Sidebar className="border-r hidden md:flex flex-col z-10 top-0 sticky">
+   <header className="sticky top-0 z-10 flex h-16 items-center border-b bg-background px-2">
+    <h1 className="text-lg font-semibold truncate">Admin Dashboard</h1>
+   </header>
+
       <SidebarContent>
         <SidebarMenu>
           <SidebarMenuItem>

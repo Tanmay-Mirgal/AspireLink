@@ -26,7 +26,7 @@ import {
 
 export function MentorSidebar({ activeTab, setActiveTab }) {
   return (
-    <Sidebar className="border-r">
+    <Sidebar className="border-r top-0 sticky z-10">
       <SidebarHeader className="border-b px-6 py-3">
         <div className="flex items-center gap-2">
           <LayoutDashboard className="h-6 w-6" />
