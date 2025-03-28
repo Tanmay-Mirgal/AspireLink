@@ -22,6 +22,7 @@ import ProjectsPage from './pages/Projects/ProjectsPage';
 import ProjectDetailsPage from './pages/Projects/ProjectDetailsPage';
 import JobDetail from './pages/JobDetails/JobDetails';
 import UserDetailProfilePage from './pages/Profile/UserDetailProfilePage ';
+import Jobs from './pages/Jobs/Jobs';
 
 function App() {
   return (
@@ -41,6 +42,7 @@ function App() {
         <Route path="/forum" element={<Forum />} />
         <Route path="/forum/:id" element={<ForumDetail />} />
         <Route path="/job/:jobId" element={<JobDetail />} />
+        <Route path="/jobs" element={<Jobs />} />
         
         {/* Fixed Meeting Routes */}
         <Route path="/meeting" element={<JoinPage />} />
