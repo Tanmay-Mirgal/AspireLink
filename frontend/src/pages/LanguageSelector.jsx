@@ -48,12 +48,12 @@ export  default function LanguageSelector() {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 bg-[#111826ff] px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-200"
+        className="flex items-center space-x-2  px-4 py-2 rounded-full shadow-sm hover:shadow-md transition-all duration-200"
       >
         <FaGlobe className="w-7 h-7 text-gray-400" />
-        {/* <span className="text-gray-700">
+        <span className="text-white">
           {languages.find(lang => lang.code === currentLang)?.nativeName}
-        </span> */}
+        </span>
       </button>
 
       {isOpen && (
