@@ -72,12 +72,12 @@ export const ProfileSidebar= ({ user, isLoading }) => {
             </div>
             
             <div className="w-full space-y-2">
-              <Button variant="secondary" className="w-full">
+              <a href='/message'><Button variant="secondary" className="w-full">
                 <Mail className="mr-2 h-4 w-4" /> Messages
-              </Button>
-              <Button variant="secondary" className="w-full">
+              </Button></a>
+              <a href='/profile'><Button variant="secondary" className="w-full">
                 My Profile
-              </Button>
+              </Button></a>
             </div>
           </div>
         </CardContent>

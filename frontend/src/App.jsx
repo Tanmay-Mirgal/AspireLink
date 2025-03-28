@@ -22,6 +22,7 @@ import ProjectsPage from './pages/Projects/ProjectsPage';
 import ProjectDetailsPage from './pages/Projects/ProjectDetailsPage';
 import JobDetail from './pages/JobDetails/JobDetails';
 import UserDetailProfilePage from './pages/Profile/UserDetailProfilePage ';
+import Jobs from './pages/Jobs/Jobs';
 import ProtectedRoute from './components/protected-route/ProtectedRoute';
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
      <ModernNavbar />
       <Routes>
         <Route path="/" element={<Home />} />
+
         <Route path="/signup" element={user ? <Navigate to={"/"} replace /> : <Signup />} />
         <Route path="/login" element={user ? <Navigate to={"/"} replace /> : <Login />} />
         <Route path="/role" element={<ProtectedRoute><Role /></ProtectedRoute>} />
@@ -49,6 +51,8 @@ function App() {
         <Route path="/project/:id" element={<ProtectedRoute><ProjectDetailsPage /></ProtectedRoute>} />
         <Route path="/mentor-dashboard" element={<ProtectedRoute><MentorDashboard /></ProtectedRoute>} />
         <Route path="/student-dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
+        <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
+
       </Routes>
       <Toaster />
     </>
