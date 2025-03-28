@@ -1,5 +1,6 @@
 import Forum from "../models/forum.model.js";
 import { User } from "../models/user.model.js";
+import { io } from "../server.js"; // Import the io instance
 
 export const createForum = async (req, res) => {
   try {
@@ -60,6 +61,7 @@ export const createForum = async (req, res) => {
     });
   }
 };
+
 export const joinForum = async (req, res) => {
   try {
     const forumId = req.params.id;
@@ -109,57 +111,70 @@ export const joinForum = async (req, res) => {
     });
   }
 };
+
 export const addMessageToForum = async (req, res) => {
-    try {
-      const forumId = req.params.id;
-      const userId = req.user._id;
-      const { content } = req.body;
-  
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      const forum = await Forum.findById(forumId);
-      if (!forum) {
-        return res.status(404).json({ message: "Forum not found" });
-      }
-  
-      if (!forum.members.includes(userId)) {
-        return res
-          .status(403)
-          .json({ message: "You are not a member of this forum" });
-      }
-  
-      if (!content || content.trim().length === 0) {
-        return res.status(400).json({ message: "Message content is required" });
-      }
-  
-      const newMessage = {
-        sender: userId,
-        content: content.trim(),
-        timestamp: new Date(),
-      };
-  
-      forum.messages.push(newMessage);
-      await forum.save();
-  
-      const updatedForum = await Forum.findById(forumId)
-        .populate("mentorId", "fullName email")
-        .populate("members", "fullName email")
-        .populate("messages.sender", "fullName email");
-  
-      return res.status(200).json({
-        message: "Message added successfully",
-        forum: updatedForum,
-      });
-    } catch (error) {
-      console.error("Error adding message to forum:", error);
-      return res
-        .status(500)
-        .json({ message: "Internal server error", error: error.message });
+  try {
+    const forumId = req.params.id;
+    const userId = req.user._id;
+    const { content } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-  };
+
+    const forum = await Forum.findById(forumId);
+    if (!forum) {
+      return res.status(404).json({ message: "Forum not found" });
+    }
+
+    const isMember = forum.members.includes(userId);
+    const isMentor = forum.mentorId.toString() === userId.toString();
+
+    if (!isMember && !isMentor) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to post in this forum" });
+    }
+
+    if (!content || content.trim().length === 0) {
+      return res.status(400).json({ message: "Message content is required" });
+    }
+
+    const newMessage = {
+      sender: userId,
+      content: content.trim(),
+      timestamp: new Date(),
+    };
+
+    forum.messages.push(newMessage);
+    await forum.save();
+
+    const updatedForum = await Forum.findById(forumId)
+      .populate("mentorId", "fullName email")
+      .populate("members", "fullName email")
+      .populate("messages.sender", "fullName email");
+
+    // Get the newly added message for socket emission
+    const addedMessage = updatedForum.messages[updatedForum.messages.length - 1];
+
+    // Emit socket event with the new message to all clients in the forum room
+    io.to(forumId).emit("receive_message", {
+      forumId,
+      message: addedMessage
+    });
+
+    return res.status(200).json({
+      message: "Message added successfully",
+      forum: updatedForum,
+    });
+  } catch (error) {
+    console.error("Error adding message to forum:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
   
 export const allForums = async (req, res) => {
     try {
