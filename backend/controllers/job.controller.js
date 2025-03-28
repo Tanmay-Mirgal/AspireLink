@@ -3,46 +3,6 @@
 import { Job } from "../models/job.model.js";
 import { User } from "../models/user.model.js";
 
-// Create a new job posting (for mentors)
-export const createJob = async (req, res) => {
-  try {
-    const { companyName, type, jobDescription, skillsRequired, jobLocation, jobTitle } = req.body;
-    
-    const mentorId = req.user.id; 
-    const mentor = await User.findById(mentorId);
-    
-    if (!mentor || mentor.role !== "mentor") {
-      return res.status(403).json({ message: "Only mentors can create job postings" });
-    }
-    
-    const newJob = new Job({
-      companyName,
-      type,
-      mentorId,
-      jobDescription,
-      skillsRequired,
-      jobLocation,
-      jobTitle,
-      appliedStudents: [] 
-    });
-    
-    await newJob.save();
-    
-    res.status(201).json({
-      success: true,
-      message: "Job posted successfully",
-      job: newJob
-    });
-    
-  } catch (error) {
-    console.error("Error creating job:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to create job posting",
-      error: error.message
-    });
-  }
-};
 
 // Get all job postings
 export const getAllJobs = async (req, res) => {
@@ -95,6 +55,48 @@ export const getJobById = async (req, res) => {
     });
   }
 };
+// Create a new job posting (for mentors)
+export const createJob = async (req, res) => {
+  try {
+    const { companyName, type, jobDescription, skillsRequired, jobLocation, jobTitle } = req.body;
+    
+    const mentorId = req.user.id; 
+    const mentor = await User.findById(mentorId);
+    
+    if (!mentor || mentor.role !== "mentor") {
+      return res.status(403).json({ message: "Only mentors can create job postings" });
+    }
+    
+    const newJob = new Job({
+      companyName,
+      type,
+      mentorId,
+      jobDescription,
+      skillsRequired,
+      jobLocation,
+      jobTitle,
+      appliedStudents: [] 
+    });
+    
+    await newJob.save();
+    
+    res.status(201).json({
+      success: true,
+      message: "Job posted successfully",
+      job: newJob
+    });
+    
+  } catch (error) {
+    console.error("Error creating job:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create job posting",
+      error: error.message
+    });
+  }
+};
+
+
 
 // Update a job posting (for mentors)
 export const updateJob = async (req, res) => {

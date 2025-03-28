@@ -16,6 +16,7 @@ import Forum from './pages/Forum/Forums';
 import { ForumDetail } from './pages/Forum/ForumDetail';
 import JoinPage from './pages/Meeting/JoinPage';
 import MeetingPage from './pages/Meeting/Meeting';
+import JobDetail from './pages/JobDetails/JobDetails';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/feed" element={<Feed />} />
         <Route path="/forum" element={<Forum />} />
         <Route path="/forum/:id" element={<ForumDetail />} />
+        <Route path="/job/:id" element={<JobDetail />} />
         
         {/* Fixed Meeting Routes */}
         <Route path="/meeting" element={<JoinPage />} />
