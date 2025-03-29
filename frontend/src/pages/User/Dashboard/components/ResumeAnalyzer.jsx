@@ -15,7 +15,10 @@ import {
     FileType2,
     RefreshCw,
     Layers,
-    CheckCircle
+    CheckCircle,
+    Award,
+    ThumbsUp,
+    ThumbsDown
 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +33,8 @@ const OCRScanner = () => {
     const [copied, setCopied] = useState(false);
     const [activeTab, setActiveTab] = useState('upload');
     const [detectedSkills, setDetectedSkills] = useState([]);
+    const [atsScore, setAtsScore] = useState(null);
+    const [atsFeedback, setAtsFeedback] = useState([]);
 
     const { toast } = useToast();
 
@@ -74,11 +79,8 @@ const OCRScanner = () => {
             value: item.count
         }));
 
-      
-
         return {
             pieChartData,
-           
             categorizedSkills,
         };
     };
@@ -113,6 +115,8 @@ const OCRScanner = () => {
         setFile(selectedFile);
         setError(null);
         setDetectedSkills([]);
+        setAtsScore(null);
+        setAtsFeedback([]);
 
         // Create a preview for images
         if (selectedFile.type.startsWith('image/') || fileName.endsWith('.png') || fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) {
@@ -138,6 +142,8 @@ const OCRScanner = () => {
         setError(null);
         setExtractedText('');
         setDetectedSkills([]);
+        setAtsScore(null);
+        setAtsFeedback([]);
 
         const formData = new FormData();
         formData.append('file', file);
@@ -172,6 +178,9 @@ const OCRScanner = () => {
                 });
 
                 setDetectedSkills(localDetectedSkills);
+                
+                // Calculate ATS score
+                analyzeAtsScore(data.text, localDetectedSkills);
 
                 toast({
                     title: "Text extracted successfully",
@@ -191,6 +200,130 @@ const OCRScanner = () => {
         } finally {
             setIsLoading(false);
         }
+    };
+
+    // Analyze the resume and generate ATS score
+    const analyzeAtsScore = (text, skills) => {
+        // Initialize score calculation parameters
+        let baseScore = 65; // Start with a base score
+        let feedback = [];
+        
+        // Check for contact information
+        const hasEmail = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/.test(text);
+        const hasPhone = /(\d{3}[-\.\s]??\d{3}[-\.\s]??\d{4}|\(\d{3}\)\s*\d{3}[-\.\s]??\d{4}|\d{3}[-\.\s]??\d{4})/.test(text);
+        
+        if (hasEmail) {
+            baseScore += 5;
+            feedback.push({ type: 'positive', message: 'Email address is present' });
+        } else {
+            feedback.push({ type: 'negative', message: 'No email address detected' });
+        }
+        
+        if (hasPhone) {
+            baseScore += 5;
+            feedback.push({ type: 'positive', message: 'Phone number is present' });
+        } else {
+            feedback.push({ type: 'negative', message: 'No phone number detected' });
+        }
+        
+        // Check for LinkedIn/GitHub profiles
+        const hasLinkedIn = /(linkedin\.com)/.test(text);
+        const hasGitHub = /(github\.com)/.test(text);
+        
+        if (hasLinkedIn) {
+            baseScore += 3;
+            feedback.push({ type: 'positive', message: 'LinkedIn profile included' });
+        }
+        
+        if (hasGitHub) {
+            baseScore += 5;
+            feedback.push({ type: 'positive', message: 'GitHub profile included - great for technical roles' });
+        }
+        
+        // Check number of skills
+        if (skills.length >= 10) {
+            baseScore += 10;
+            feedback.push({ type: 'positive', message: 'Strong set of technical skills detected' });
+        } else if (skills.length >= 5) {
+            baseScore += 5;
+            feedback.push({ type: 'positive', message: 'Good range of technical skills' });
+        } else if (skills.length > 0) {
+            feedback.push({ type: 'neutral', message: 'Limited technical skills detected' });
+        } else {
+            baseScore -= 10;
+            feedback.push({ type: 'negative', message: 'No technical skills detected' });
+        }
+        
+        // Check for education section
+        const educationKeywords = ['education', 'university', 'college', 'bachelor', 'master', 'phd', 'degree'];
+        const hasEducation = educationKeywords.some(keyword => 
+            new RegExp('\\b' + keyword + '\\b', 'i').test(text)
+        );
+        
+        if (hasEducation) {
+            baseScore += 5;
+            feedback.push({ type: 'positive', message: 'Education section detected' });
+        } else {
+            feedback.push({ type: 'negative', message: 'No education information found' });
+        }
+        
+        // Check for experience
+        const experienceKeywords = ['experience', 'work', 'job', 'position', 'employment'];
+        const hasExperience = experienceKeywords.some(keyword => 
+            new RegExp('\\b' + keyword + '\\b', 'i').test(text)
+        );
+        
+        if (hasExperience) {
+            baseScore += 5;
+            feedback.push({ type: 'positive', message: 'Work experience section detected' });
+        } else {
+            feedback.push({ type: 'negative', message: 'No work experience section found' });
+        }
+        
+        // Check for achievements/metrics
+        const achievementPattern = /increased|improved|reduced|saved|delivered|managed|led|achieved|awarded/i;
+        const hasAchievements = achievementPattern.test(text);
+        const hasMetrics = /\d+%|\$\d+|\d+ percent/i.test(text);
+        
+        if (hasAchievements) {
+            baseScore += 5;
+            feedback.push({ type: 'positive', message: 'Achievement-oriented language detected' });
+        }
+        
+        if (hasMetrics) {
+            baseScore += 5;
+            feedback.push({ type: 'positive', message: 'Quantifiable metrics found - great for demonstrating impact' });
+        }
+        
+        // Check resume length via word count
+        const wordCount = text.split(/\s+/).length;
+        if (wordCount > 700) {
+            baseScore -= 5;
+            feedback.push({ type: 'negative', message: 'Resume may be too long (over 700 words)' });
+        } else if (wordCount < 300) {
+            baseScore -= 5;
+            feedback.push({ type: 'negative', message: 'Resume may be too short (under 300 words)' });
+        } else {
+            baseScore += 5;
+            feedback.push({ type: 'positive', message: 'Resume length is appropriate' });
+        }
+        
+        // Check for certification section
+        const certificationKeywords = ['certification', 'certified', 'certificate'];
+        const hasCertifications = certificationKeywords.some(keyword => 
+            new RegExp('\\b' + keyword + '\\b', 'i').test(text)
+        );
+        
+        if (hasCertifications) {
+            baseScore += 3;
+            feedback.push({ type: 'positive', message: 'Certifications found' });
+        }
+        
+        // Clamp final score between 0 and 100
+        const finalScore = Math.min(100, Math.max(0, Math.round(baseScore)));
+        
+        setAtsScore(finalScore);
+        setAtsFeedback(feedback);
     };
 
     // Copy extracted text to clipboard
@@ -244,6 +377,8 @@ const OCRScanner = () => {
         setExtractedText('');
         setError(null);
         setDetectedSkills([]);
+        setAtsScore(null);
+        setAtsFeedback([]);
         setActiveTab('upload');
     };
 
@@ -251,7 +386,7 @@ const OCRScanner = () => {
     const renderSkillsVisualization = () => {
         if (detectedSkills.length === 0) return null;
 
-        const { pieChartData, barChartData, categorizedSkills } = prepareSkillsVisualizationData(detectedSkills);
+        const { pieChartData, categorizedSkills } = prepareSkillsVisualizationData(detectedSkills);
 
         return (
             <div className="space-y-6">
@@ -262,7 +397,7 @@ const OCRScanner = () => {
                             <CardTitle>Skill Category Distribution</CardTitle>
                             <CardDescription>Proportion of skills across different categories</CardDescription>
                         </CardHeader>
-                        <CardContent  >
+                        <CardContent>
                             <ResponsiveContainer width="100%" height={300}>
                                 <PieChart>
                                     <Pie
@@ -285,62 +420,6 @@ const OCRScanner = () => {
                             </ResponsiveContainer>
                         </CardContent>
                     </Card>
-
-                    {/* Bar Chart for Individual Skills */}
-                    {/* <Card>
-                        <CardHeader>
-                            <CardTitle>Skill Breakdown</CardTitle>
-                            <CardDescription>Detailed view of detected skills</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <ResponsiveContainer width="100%" height={300}>
-                                <BarChart
-                                    layout="vertical"
-                                    data={chartData}
-                                    margin={{ left: 20, right: 20, bottom: 5 }}
-                                >
-                                    <CartesianGrid
-                                        strokeDasharray="3 3"
-                                        horizontal={true}
-                                        vertical={false}
-                                    />
-                                    <XAxis
-                                        type="number"
-                                        domain={[0, 100]}
-                                        tickFormatter={(value) => `${value}%`}
-                                    />
-                                    <YAxis
-                                        dataKey="skill"
-                                        type="category"
-                                        width={120}
-                                        tickLine={false}
-                                    />
-                                    <Tooltip
-                                        cursor={{ fill: 'transparent' }}
-                                        formatter={(value, name, props) => {
-                                            const { payload } = props;
-                                            return [`${value}%`, payload.skill];
-                                        }}
-                                        labelFormatter={(label) => `Skill: ${label}`}
-                                    />
-                                    <Bar
-                                        dataKey="percentage"
-                                        fill="#8884d8"
-                                        barSize={30}
-                                    >
-                                        {chartData.map((entry, index) => (
-                                            <Bar
-                                                key={`bar-${index}`}
-                                                dataKey="percentage"
-                                                fill={categoryColors[entry.category] || '#8884d8'}
-                                                barSize={30}
-                                            />
-                                        ))}
-                                    </Bar>
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </CardContent>
-                    </Card> */}
                 </div>
 
                 {/* Detailed Skill Breakdown */}
@@ -373,22 +452,155 @@ const OCRScanner = () => {
         );
     };
 
+    // Render ATS Score analysis
+    const renderAtsScoreAnalysis = () => {
+        if (atsScore === null) return null;
+
+        // Define colors and labels based on score ranges
+        let scoreColor, scoreLabel;
+        if (atsScore >= 80) {
+            scoreColor = "text-green-600";
+            scoreLabel = "Excellent";
+        } else if (atsScore >= 70) {
+            scoreColor = "text-blue-600";
+            scoreLabel = "Good";
+        } else if (atsScore >= 50) {
+            scoreColor = "text-yellow-600";
+            scoreLabel = "Average";
+        } else {
+            scoreColor = "text-red-600";
+            scoreLabel = "Needs Improvement";
+        }
+
+        return (
+            <div className="space-y-6">
+                {/* Score Overview */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle className="flex items-center">
+                            <Award className="h-5 w-5 mr-2" />
+                            ATS Compatibility Score
+                        </CardTitle>
+                        <CardDescription>
+                            How well your resume is likely to perform with Applicant Tracking Systems
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex flex-col items-center justify-center p-6">
+                            <div className={`text-6xl font-bold mb-2 ${scoreColor}`}>
+                                {atsScore}%
+                            </div>
+                            <div className={`text-xl font-medium ${scoreColor}`}>
+                                {scoreLabel}
+                            </div>
+                            <Progress
+                                value={atsScore}
+                                className="w-full mt-6 h-2"
+                            />
+                            <div className="grid grid-cols-4 w-full mt-1 text-xs text-center">
+                                <div className="text-red-500">Poor</div>
+                                <div className="text-yellow-500">Average</div>
+                                <div className="text-blue-500">Good</div>
+                                <div className="text-green-500">Excellent</div>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Detailed Feedback */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>ATS Feedback</CardTitle>
+                        <CardDescription>
+                            Analysis of resume elements that affect ATS compatibility
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-3">
+                            <h4 className="font-semibold mb-2">Key Findings:</h4>
+                            <div className="grid gap-2">
+                                {atsFeedback.map((item, index) => (
+                                    <div 
+                                        key={index} 
+                                        className={`flex items-start p-3 rounded-md ${
+                                            item.type === 'positive' 
+                                                ? 'bg-green-50 border-l-4 border-green-400' 
+                                                : item.type === 'negative'
+                                                    ? 'bg-red-50 border-l-4 border-red-400'
+                                                    : 'bg-gray-50 border-l-4 border-gray-400'
+                                        }`}
+                                    >
+                                        {item.type === 'positive' ? (
+                                            <ThumbsUp className="h-5 w-5 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                                        ) : item.type === 'negative' ? (
+                                            <ThumbsDown className="h-5 w-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" />
+                                        ) : (
+                                            <AlertCircle className="h-5 w-5 text-gray-500 mr-2 mt-0.5 flex-shrink-0" />
+                                        )}
+                                        <span>{item.message}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Improvement Suggestions */}
+                <Card>
+                    <CardHeader>
+                        <CardTitle>How to Improve Your ATS Score</CardTitle>
+                        <CardDescription>
+                            Recommendations to make your resume more ATS-friendly
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            <div className="p-3 border rounded-md">
+                                <h4 className="font-medium mb-1">Tailor to Job Description</h4>
+                                <p className="text-sm">Include keywords and phrases from the specific job description you're applying to.</p>
+                            </div>
+                            <div className="p-3 border rounded-md">
+                                <h4 className="font-medium mb-1">Simple Formatting</h4>
+                                <p className="text-sm">Use standard section headers and avoid complex tables, graphics, or unusual fonts.</p>
+                            </div>
+                            <div className="p-3 border rounded-md">
+                                <h4 className="font-medium mb-1">Quantify Achievements</h4>
+                                <p className="text-sm">Use numbers and percentages to highlight your accomplishments.</p>
+                            </div>
+                            <div className="p-3 border rounded-md">
+                                <h4 className="font-medium mb-1">Include Contact Information</h4>
+                                <p className="text-sm">Ensure your email, phone number, and professional profiles are clearly visible.</p>
+                            </div>
+                            <div className="p-3 border rounded-md">
+                                <h4 className="font-medium mb-1">Spell Out Acronyms</h4>
+                                <p className="text-sm">Use both the acronym and the full term for important industry-specific terminology.</p>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+        );
+    };
+
     return (
         <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
                 <div className="text-center mb-8">
                     <h1 className="text-3xl font-bold">Resume Analyzer</h1>
                     <p className="mt-2 text-lg">
-                        Extract skills from resumes and visualize technical capabilities
+                        Extract skills from resumes, analyze ATS compatibility, and visualize technical capabilities
                     </p>
                 </div>
 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
+                    <TabsList className="grid w-full grid-cols-4">
                         <TabsTrigger value="upload">Upload</TabsTrigger>
                         <TabsTrigger value="results" disabled={!extractedText}>Results</TabsTrigger>
                         <TabsTrigger value="skills" disabled={!extractedText}>
-                            Skills Visualization {detectedSkills.length > 0 && `(${detectedSkills.length})`}
+                            Skills {detectedSkills.length > 0 && `(${detectedSkills.length})`}
+                        </TabsTrigger>
+                        <TabsTrigger value="ats" disabled={atsScore === null}>
+                            ATS Score {atsScore !== null && `(${atsScore}%)`}
                         </TabsTrigger>
                     </TabsList>
 
@@ -475,7 +687,7 @@ const OCRScanner = () => {
                                                 Processing...
                                             </>
                                         ) : (
-                                            'Extract Text & Analyze Skills'
+                                            'Extract Text & Analyze Resume'
                                         )}
                                     </Button>
                                 </div>
@@ -590,6 +802,48 @@ const OCRScanner = () => {
                                 >
                                     Process Another Document
                                 </Button>
+                            </CardFooter>
+                        </Card>
+                    </TabsContent>
+
+                    {/* ATS Score Tab */}
+                    <TabsContent value="ats" className="mt-6">
+                        <Card className="w-full">
+                            <CardHeader>
+                                <CardTitle className="flex items-center">
+                                    <CheckCircle className="h-5 w-5 mr-2" />
+                                    ATS Compatibility Analysis
+                                </CardTitle>
+                                <CardDescription>
+                                    How well your resume performs with Applicant Tracking Systems
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                {atsScore !== null ? (
+                                    renderAtsScoreAnalysis()
+                                ) : (
+                                    <div className="text-center py-8">
+                                        <AlertCircle className="h-12 w-12 mx-auto mb-4" />
+                                        <h3 className="text-lg font-medium">No ATS Analysis Available</h3>
+                                        <p className="mt-2">
+                                            We couldn't generate an ATS score for your document.
+                                            Try uploading a resume or CV.
+                                        </p>
+                                    </div>
+                                )}
+                            </CardContent>
+                            <CardFooter className="flex justify-between">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setActiveTab('results')}
+                                >
+                                    Back to Text Results
+                                </Button>
+                                {atsScore !== null && atsScore < 70 && (
+                                    <Button>
+                                        Get Improvement Suggestions
+                                    </Button>
+                                )}
                             </CardFooter>
                         </Card>
                     </TabsContent>
