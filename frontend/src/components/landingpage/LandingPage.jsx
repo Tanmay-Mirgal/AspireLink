@@ -99,6 +99,124 @@ const LandingPage = () => {
     damping: 30,
     restDelta: 0.001,
   })
+  const handleSubscription = async (plan) => {
+    try {
+      setLoadingPlan(plan.id);
+      setSelectedPlan(plan); // Store the selected plan for receipt generation
+
+      // Check if user is authenticated
+      const token = localStorage.getItem("token");
+      if (!token) {
+        if (typeof toast !== "undefined") {
+          toast.error("Please login to subscribe");
+        } else {
+          alert("Please login to subscribe");
+        }
+        navigate("/login", { state: { from: "/" } });
+        return;
+      }
+
+      // Create order on your backend
+      const { data } = await axiosInstance.post("/payments/create-order", {
+        planId: plan.id,
+      });
+
+      // Load Razorpay if not already loaded
+      if (!window.Razorpay) {
+        if (typeof toast !== "undefined") {
+          toast.error("Payment gateway not loaded. Please refresh the page");
+        } else {
+          alert("Payment gateway not loaded. Please refresh the page");
+        }
+        return;
+      }
+
+      // Create Razorpay checkout options
+      const options = {
+        key: data.key_id,
+        amount: data.amount,
+        currency: data.currency,
+        name: "AlgoSpace",
+        description: `Subscription to ${plan.name} Plan`,
+        order_id: data.order_id,
+        prefill: {
+          name: getUserData().name || "",
+          email: getUserData().email || "",
+          contact: "",
+        },
+        notes: {
+          planId: plan.id,
+        },
+        theme: {
+          color: "#3399cc",
+        },
+        handler: async function (response) {
+          try {
+            // Verify payment on your backend
+            const verificationResponse = await axiosInstance.post(
+              "/payments/verify-payment",
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                plan_id: plan.id,
+              }
+            );
+
+            if (verificationResponse.data.success) {
+              // Store payment data for the receipt
+              setPaymentData(response);
+
+              // Show success modal with receipt
+              setShowSuccessModal(true);
+
+              if (typeof toast !== "undefined") {
+                toast.success("Subscription activated successfully!");
+              } else {
+                alert("Subscription activated successfully!");
+              }
+            } else {
+              if (typeof toast !== "undefined") {
+                toast.error("Payment verification failed");
+              } else {
+                alert("Payment verification failed");
+              }
+            }
+          } catch (error) {
+            console.error("Error verifying payment:", error);
+            if (typeof toast !== "undefined") {
+              toast.error("Payment verification failed");
+            } else {
+              alert("Payment verification failed");
+            }
+          }
+        },
+      };
+
+      // Open Razorpay checkout
+      const razorpayInstance = new window.Razorpay(options);
+      razorpayInstance.open();
+
+      // Handle payment failures
+      razorpayInstance.on("payment.failed", function (response) {
+        if (typeof toast !== "undefined") {
+          toast.error("Payment failed. Please try again.");
+        } else {
+          alert("Payment failed. Please try again.");
+        }
+        console.error("Payment failed:", response.error);
+      });
+    } catch (error) {
+      console.error("Error creating order:", error);
+      if (typeof toast !== "undefined") {
+        toast.error("Failed to initiate payment process");
+      } else {
+        alert("Failed to initiate payment process");
+      }
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   // Refs for scroll-triggered animations
   const featuresRef = useRef(null)
