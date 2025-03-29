@@ -42,11 +42,14 @@ function App() {
   const location = useLocation();
   const [showFooter, setShowFooter] = useState(true);
   
-  // Check if current path is a forum detail page
   useEffect(() => {
-    // Using regex to match forum/:id pattern
     const isForumDetailPage = /^\/forum\/[^/]+$/.test(location.pathname);
-    setShowFooter(!isForumDetailPage);
+    const isMeetingRoomPage = /^\/meeting\/[^/]+$/.test(location.pathname);
+    const isLoginPage = location.pathname === '/login';
+    const isSignupPage = location.pathname === '/signup';
+    
+    setShowFooter(!(isForumDetailPage || isMeetingRoomPage || isLoginPage || isSignupPage));
+
   }, [location.pathname]);
   
   return (
@@ -55,7 +58,6 @@ function App() {
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          
           <Route path="/signup" element={user ? <Navigate to={"/"} replace /> : <Signup />} />
           <Route path="/login" element={user ? <Navigate to={"/"} replace /> : <Login />} />
           <Route path="/role" element={<ProtectedRoute><Role /></ProtectedRoute>} />
