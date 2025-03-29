@@ -9,6 +9,7 @@ import Home from './pages/Home/Home';
 import { ForumDetail } from './pages/Forum/ForumDetail';
 import Forums from './pages/Forum/Forums';
 import ResumeBuilder from './pages/Resume/Resume';
+import Footer from './components/Footer/Footer';
 
 // Lazily loaded components
 const Signup = lazy(() => import('./pages/Signup/Signup'));
@@ -69,6 +70,7 @@ function App() {
           <Route path="/resume" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
         </Routes>
       </Suspense>
+      <Footer/>
       <Toaster />
     </>
   );

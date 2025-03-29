@@ -133,7 +133,7 @@ const DetailedProfileForm = () => {
       await completeProfile(cleanedProfile);
       
       
-      navigate(`/${user.role}-dashboard`);
+      navigate(`/profile`);
     } catch (error) {
       console.error('Profile completion error:', error);
     }
