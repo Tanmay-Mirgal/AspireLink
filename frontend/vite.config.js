@@ -10,4 +10,19 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        assetFileNames: (assetInfo) => {
+          // Preserve original filenames for fonts and handle other assets
+          if (assetInfo.name?.match(/\.(woff|woff2|eot|ttf|otf)$/)) {
+            return 'assets/[name][extname]'
+          }
+          return 'assets/[name]-[hash][extname]'
+        }
+      }
+    }
+  },
+  // Ensure proper handling of static assets
+  assetsInclude: ['**/*.woff', '**/*.woff2']
 })
