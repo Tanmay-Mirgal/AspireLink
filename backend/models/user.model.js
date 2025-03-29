@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
     profilePic: {
       type: String,
       default:
-        "https://res.cloudinary.com/dmitriy-klimov/image/upload/v1631304716/default_profile_picture.png",
+        "https://res.cloudinary.com/dhqucojwj/image/upload/v1743221336/uploads/srzkgvcfcy74gi3epbb6.jpg",
     },
     bio: {
       type: String,

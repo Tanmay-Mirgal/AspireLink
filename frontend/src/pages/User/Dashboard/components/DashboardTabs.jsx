@@ -42,6 +42,7 @@ export function DashboardTabs() {
         <TabsTrigger value="progress">Progress</TabsTrigger>
         <TabsTrigger value="Resume">Resume Analyzer</TabsTrigger>
         <TabsTrigger value="eligibility">Job Eligibility</TabsTrigger>
+        <TabsTrigger value="resume">Resume </TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview" className="space-y-6">
