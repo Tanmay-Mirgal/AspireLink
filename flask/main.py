@@ -19,10 +19,10 @@ CORS(app)
 logging.basicConfig(level=logging.INFO)
 
 # Set Tesseract path (Windows users only, remove for Linux/macOS)
-pytesseract.pytesseract.tesseract_cmd = r"C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+pytesseract.pytesseract.tesseract_cmd = r"../flask/Tesseract-OCR"
 
 # Set Poppler path (Windows users only, remove for Linux/macOS)
-POPPLER_PATH = r"C:\\Users\\DELL\\Downloads\\Release-24.08.0-0\\poppler-24.08.0\\Library\\bin"
+POPPLER_PATH = r"../flask/Release-24.08.0-0 (1)/poppler-24.08.0/Library/bin"
 
 # Load spaCy NLP model
 try:
