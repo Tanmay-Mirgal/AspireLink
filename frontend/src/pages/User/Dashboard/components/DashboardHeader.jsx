@@ -18,10 +18,7 @@ export function DashboardHeader() {
         <SidebarTrigger />
         <div className="ml-4 text-lg font-semibold">Student Dashboard</div>
         <div className="ml-auto flex items-center space-x-4">
-          <Button variant="outline" size="sm">
-            <Calendar className="mr-2 h-4 w-4" />
-            Schedule Session
-          </Button>
+       
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">
