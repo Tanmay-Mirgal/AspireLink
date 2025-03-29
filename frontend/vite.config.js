@@ -2,8 +2,8 @@ import path from "path"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
-// https://vite.dev/config/
 export default defineConfig({
+  base: '/',
   plugins: [react()],
   resolve: {
     alias: {
@@ -11,10 +11,10 @@ export default defineConfig({
     },
   },
   build: {
+    outDir: 'dist',
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
-          // Preserve original filenames for fonts and handle other assets
           if (assetInfo.name?.match(/\.(woff|woff2|eot|ttf|otf)$/)) {
             return 'assets/[name][extname]'
           }
@@ -23,6 +23,5 @@ export default defineConfig({
       }
     }
   },
-  // Ensure proper handling of static assets
   assetsInclude: ['**/*.woff', '**/*.woff2']
 })
