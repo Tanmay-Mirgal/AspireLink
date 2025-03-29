@@ -74,6 +74,13 @@
     --sidebar-ring: 217.2 91.2% 59.8%}
 }
 
+@font-face {
+  font-family: 'Sentient';
+  src: url('/assets/Sentient-Variable-e0c1b99d.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 @layer base {
   * {
     @apply border-border;
