@@ -166,31 +166,6 @@ const Footer = () => {
         </div>
 
         {/* Links section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-          {footerLinks.map((section, index) => (
-            <motion.div
-              key={section.title}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 * index }}
-              viewport={{ once: true }}
-            >
-              <h3 className="font-semibold text-lg mb-4">{section.title}</h3>
-              <ul className="space-y-3">
-                {section.links.map((link) => (
-                  <li key={link.name}>
-                    <Link
-                      href={link.href}
-                      className="text-muted-foreground hover:text-primary transition-colors duration-200"
-                    >
-                      {link.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          ))}
-        </div>
 
         {/* Bottom section with copyright and back to top */}
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-border/20">
