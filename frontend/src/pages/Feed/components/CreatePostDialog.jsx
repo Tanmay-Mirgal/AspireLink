@@ -75,7 +75,7 @@ export const CreatePostDialog = ({ user }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="flex items-center space-x-2 mb-4 cursor-pointer bg-background border rounded-md p-3">
+        <div className="flex items-center space-x-2 mb-4 cursor-pointer bg-white border border-gray-200 rounded-md p-3">
           <Avatar>
             <AvatarImage src={user?.profilePic} />
             <AvatarFallback>{user ? getInitials(user) : 'U'}</AvatarFallback>
@@ -84,13 +84,13 @@ export const CreatePostDialog = ({ user }) => {
             placeholder="What's on your mind?" 
             readOnly 
             onClick={() => setOpen(true)}
-            className="flex-grow cursor-pointer bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="flex-grow cursor-pointer bg-white border-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-gray-800"
           />
         </div>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[625px]">
+      <DialogContent className="sm:max-w-[625px] bg-white border-gray-200">
         <DialogHeader>
-          <DialogTitle>Create a Post</DialogTitle>
+          <DialogTitle className="text-gray-900">Create a Post</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="flex items-center space-x-3 mb-4">
@@ -99,8 +99,8 @@ export const CreatePostDialog = ({ user }) => {
               <AvatarFallback>{user ? getInitials(user) : 'U'}</AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-semibold">{user ? getFullName(user) : 'User'}</p>
-              <p className="text-xs text-muted-foreground">Medical Professional</p>
+              <p className="font-semibold text-gray-900">{user ? getFullName(user) : 'User'}</p>
+              <p className="text-xs text-gray-500">Medical Professional</p>
             </div>
           </div>
           
@@ -108,14 +108,14 @@ export const CreatePostDialog = ({ user }) => {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Add a title (optional)"
-            className="w-full"
+            className="w-full bg-white border-gray-300 text-gray-800"
           />
           
           <Textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder="What's on your mind?"
-            className="min-h-[150px]"
+            className="min-h-[150px] bg-white border-gray-300 text-gray-800"
           />
           
           {imagePreview && (
@@ -128,7 +128,7 @@ export const CreatePostDialog = ({ user }) => {
               <Button 
                 variant="destructive" 
                 size="icon" 
-                className="absolute top-2 right-2 h-8 w-8 rounded-full"
+                className="absolute top-2 right-2 h-8 w-8 rounded-full bg-red-500 hover:bg-red-600"
                 onClick={handleRemoveImage}
               >
                 <X className="h-4 w-4" />
@@ -139,8 +139,8 @@ export const CreatePostDialog = ({ user }) => {
           <div className="flex justify-between items-center">
             <div className="flex space-x-2">
               <label htmlFor="image-upload" className="cursor-pointer">
-                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-muted hover:bg-primary/10">
-                  <Image className="h-5 w-5" />
+                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gray-100 hover:bg-gray-200">
+                  <Image className="h-5 w-5 text-gray-700" />
                 </div>
                 <input 
                   type="file" 
@@ -150,13 +150,14 @@ export const CreatePostDialog = ({ user }) => {
                   className="hidden" 
                 />
               </label>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="text-gray-700 hover:bg-gray-100">
                 <Smile className="h-5 w-5" />
               </Button>
             </div>
             <Button 
               onClick={handlePostCreate}
               disabled={!content.trim() || isLoading}
+              className="bg-blue-600 hover:bg-blue-700 text-white"
             >
               {isLoading ? (
                 <>
