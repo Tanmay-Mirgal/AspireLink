@@ -9,6 +9,7 @@ import { useStudentStore } from "@/store/useStudentStore"
 import ResumeAnalyzer from "./ResumeAnalyzer"
 
 import EligibilityDashboard from "./Eligibility-components/EligibilityDashboard"
+import ResumeBuilder from "@/pages/Resume/Resume"
 
 export function DashboardTabs() {
   // Get state and actions directly from the store
@@ -33,7 +34,7 @@ export function DashboardTabs() {
   ]
  return (
     <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-      <TabsList className="grid w-full grid-cols-8">
+      <TabsList className="grid w-full grid-cols-9">
         <TabsTrigger value="overview">Overview</TabsTrigger>
         <TabsTrigger value="mentors">Mentors</TabsTrigger>
         <TabsTrigger value="skills">Skills</TabsTrigger>
@@ -42,7 +43,7 @@ export function DashboardTabs() {
         <TabsTrigger value="progress">Progress</TabsTrigger>
         <TabsTrigger value="Resume">Resume Analyzer</TabsTrigger>
         <TabsTrigger value="eligibility">Job Eligibility</TabsTrigger>
-        <TabsTrigger value="resume">Resume </TabsTrigger>
+        <TabsTrigger value="resume">Resume Builder</TabsTrigger>
       </TabsList>
 
       <TabsContent value="overview" className="space-y-6">
@@ -86,6 +87,9 @@ export function DashboardTabs() {
       </TabsContent>
       <TabsContent value="eligibility" className="space-y-6">
         <EligibilityDashboard/>
+      </TabsContent>
+      <TabsContent value="resume" className="space-y-6">
+        <ResumeBuilder/>
       </TabsContent>
     </Tabs>
   )

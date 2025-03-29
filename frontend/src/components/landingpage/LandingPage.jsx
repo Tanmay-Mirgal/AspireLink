@@ -78,6 +78,7 @@ const LandingPage = () => {
       description: "Continuous learning and development",
     },
   ]
+  const user = JSON.parse(localStorage.getItem("user"))
 
   // Animated text for hero section - Fixed by ensuring all words have similar length
   const words = ["Career", "Future", "Growth"]
@@ -571,7 +572,9 @@ const LandingPage = () => {
                 whileHover={{ x: 0 }}
                 transition={{ duration: 0.4 }}
               />
-              <span className="relative z-10">Create Free Account</span>
+             {
+              user ?  <span className="relative z-10">Go To Dashboard</span> : <span className="relative z-10">Create Free Account</span>
+             }
               <ArrowRight className="relative z-10 ml-2 group-hover:translate-x-1 transition-transform" size={24} />
             </Button>
 

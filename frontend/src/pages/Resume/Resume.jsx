@@ -922,12 +922,12 @@ const ResumeBuilder = () => {
             {/* Template Selection */}
             <div className={cardClasses}>
               <h3 className="text-lg font-medium text-gray-900 mb-4">Choose Template</h3>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
                 {Object.entries(templates).map(([key, value]) => (
                   <button
                     key={key}
                     onClick={() => setTemplate(key)}
-                    className={`p-4 rounded-lg border-2 transition-all duration-200 ${
+                    className={`p-4 text-xs rounded-lg border-2 transition-all duration-200 ${
                       template === key
                         ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
                         : 'border-gray-300 hover:border-indigo-400 text-gray-600'
@@ -943,37 +943,37 @@ const ResumeBuilder = () => {
             <div className="flex space-x-2 overflow-x-auto pb-2">
               <button
                 onClick={() => setActiveSection('personalInfo')}
-                className={`${tabClasses} ${activeSection === 'personalInfo' ? activeTabClasses : inactiveTabClasses}`}
+                className={`${tabClasses} ${activeSection === 'personalInfo' ? activeTabClasses : inactiveTabClasses} text-xs`}
               >
                 Personal Info
               </button>
               <button
                 onClick={() => setActiveSection('summary')}
-                className={`${tabClasses} ${activeSection === 'summary' ? activeTabClasses : inactiveTabClasses}`}
+                className={`${tabClasses} ${activeSection === 'summary' ? activeTabClasses : inactiveTabClasses} text-xs`}
               >
                 Summary
               </button>
               <button
                 onClick={() => setActiveSection('experience')}
-                className={`${tabClasses} ${activeSection === 'experience' ? activeTabClasses : inactiveTabClasses}`}
+                className={`${tabClasses} ${activeSection === 'experience' ? activeTabClasses : inactiveTabClasses} text-xs`}
               >
                 Experience
               </button>
               <button
                 onClick={() => setActiveSection('education')}
-                className={`${tabClasses} ${activeSection === 'education' ? activeTabClasses : inactiveTabClasses}`}
+                className={`${tabClasses} ${activeSection === 'education' ? activeTabClasses : inactiveTabClasses} text-xs`}
               >
                 Education
               </button>
               <button
                 onClick={() => setActiveSection('skills')}
-                className={`${tabClasses} ${activeSection === 'skills' ? activeTabClasses : inactiveTabClasses}`}
+                className={`${tabClasses} ${activeSection === 'skills' ? activeTabClasses : inactiveTabClasses} text-xs`}
               >
                 Skills
               </button>
               <button
                 onClick={() => setActiveSection('certifications')}
-                className={`${tabClasses} ${activeSection === 'certifications' ? activeTabClasses : inactiveTabClasses}`}
+                className={`${tabClasses} ${activeSection === 'certifications' ? activeTabClasses : inactiveTabClasses} text-xs`}
               >
                 Certifications
               </button>

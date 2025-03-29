@@ -98,6 +98,15 @@ import {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton 
+                isActive={activeTab === "resume"} 
+                onClick={() => setActiveTab("resume")}
+              >
+                <PieChart />
+                <span>Resume Builder</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton 
                 isActive={activeTab === "eligibility"} 
                 onClick={() => setActiveTab("eligibility")}
               >

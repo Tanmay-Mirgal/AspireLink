@@ -4,14 +4,13 @@ import { Toaster } from 'react-hot-toast';
 import ModernNavbar from './components/sidebar/ModernNavbar';
 import ProtectedRoute from './components/protected-route/ProtectedRoute';
 
-// Eagerly loaded components
 import Home from './pages/Home/Home';
 import { ForumDetail } from './pages/Forum/ForumDetail';
 import Forums from './pages/Forum/Forums';
 import ResumeBuilder from './pages/Resume/Resume';
 import Footer from './components/Footer/Footer';
+import { Loader } from 'lucide-react';
 
-// Lazily loaded components
 const Signup = lazy(() => import('./pages/Signup/Signup'));
 const Login = lazy(() => import('./pages/Login/Login'));
 const Role = lazy(() => import('./pages/Role/Role'));
@@ -34,7 +33,7 @@ const Jobs = lazy(() => import('./pages/Jobs/Jobs'));
 // Loading fallback component
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+    <Loader className="animate-spin size-20" /> 
   </div>
 );
 
