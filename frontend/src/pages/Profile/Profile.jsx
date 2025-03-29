@@ -56,29 +56,29 @@ const SkillGraph = ({ skills }) => {
         <BarChart data={chartData}>
           <CartesianGrid 
             strokeDasharray="3 3" 
-            stroke="white" 
-            className="opacity-20"
+            stroke="#e5e7eb" 
+            className="opacity-50"
           />
           <XAxis 
             dataKey="none" 
-            stroke="white"
-            tick={{ fill: "white" }}
+            stroke="#374151"
+            tick={{ fill: "#374151" }}
           />
           <YAxis 
-            stroke="white"
-            tick={{ fill: "white" }}
+            stroke="#374151"
+            tick={{ fill: "#374151" }}
             domain={[0, 10]}
           />
           <RechartsTooltip 
-            cursor={{ fill: 'rgba(255,255,255,0.1)' }}
+            cursor={{ fill: 'rgba(0,0,0,0.05)' }}
             content={({ active, payload }) => {
               if (active && payload && payload.length) {
                 const data = payload[0].payload;
                 return (
-                  <div className="bg-gray-900 p-4 rounded-lg shadow-lg border border-white/10">
-                    <p className="font-bold text-white">{data.name}</p>
-                    <p className="text-gray-300">Proficiency: {data.proficiency}/10</p>
-                    <p className="text-gray-300">Experience: {data.experience} years</p>
+                  <div className="bg-white p-4 rounded-lg shadow-lg border border-gray-200">
+                    <p className="font-bold text-gray-900">{data.name}</p>
+                    <p className="text-gray-700">Proficiency: {data.proficiency}/10</p>
+                    <p className="text-gray-700">Experience: {data.experience} years</p>
                   </div>
                 );
               }
@@ -98,15 +98,15 @@ const SkillGraph = ({ skills }) => {
 
 // Markdown Styles
 const markdownComponents = {
-  h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-white mb-4" {...props} />,
-  h2: ({node, ...props}) => <h2 className="text-xl font-semibold text-white mb-3" {...props} />,
-  h3: ({node, ...props}) => <h3 className="text-lg font-medium text-white mb-2" {...props} />,
-  p: ({node, ...props}) => <p className="text-gray-300 mb-4" {...props} />,
-  a: ({node, ...props}) => <a className="text-blue-500 hover:underline" {...props} />,
-  ul: ({node, ...props}) => <ul className="list-disc pl-6 text-gray-300 mb-4" {...props} />,
-  ol: ({node, ...props}) => <ol className="list-decimal pl-6 text-gray-300 mb-4" {...props} />,
+  h1: ({node, ...props}) => <h1 className="text-2xl font-bold text-gray-900 mb-4" {...props} />,
+  h2: ({node, ...props}) => <h2 className="text-xl font-semibold text-gray-900 mb-3" {...props} />,
+  h3: ({node, ...props}) => <h3 className="text-lg font-medium text-gray-900 mb-2" {...props} />,
+  p: ({node, ...props}) => <p className="text-gray-700 mb-4" {...props} />,
+  a: ({node, ...props}) => <a className="text-blue-600 hover:underline" {...props} />,
+  ul: ({node, ...props}) => <ul className="list-disc pl-6 text-gray-700 mb-4" {...props} />,
+  ol: ({node, ...props}) => <ol className="list-decimal pl-6 text-gray-700 mb-4" {...props} />,
   li: ({node, ...props}) => <li className="mb-2" {...props} />,
-  blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-gray-500 pl-4 italic text-gray-400 my-4" {...props} />
+  blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-gray-300 pl-4 italic text-gray-600 my-4" {...props} />
 }
 
 // Profile Page Component
@@ -188,8 +188,8 @@ My core mission is to:
   // Loading State
   if (isLoading || refreshing) {
     return (
-      <div className="min-h-screen bg-black text-white p-6">
-        <Skeleton className="h-64 w-full bg-gray-800" />
+      <div className="min-h-screen bg-gray-50 text-gray-900 p-6">
+        <Skeleton className="h-64 w-full bg-gray-200" />
       </div>
     )
   }
@@ -197,13 +197,13 @@ My core mission is to:
   // No User Data
   if (!user) {
     return (
-      <div className="min-h-screen bg-black text-white flex justify-center items-center">
-        <Card className="w-[400px] bg-gray-900 border-gray-800">
+      <div className="min-h-screen bg-gray-50 text-gray-900 flex justify-center items-center">
+        <Card className="w-[400px] bg-white border-gray-200 shadow-md">
           <CardContent className="pt-6 text-center space-y-4">
-            <h2 className="text-3xl font-bold text-blue-500 mb-4">Profile Not Found</h2>
+            <h2 className="text-3xl font-bold text-blue-600 mb-4">Profile Not Found</h2>
             <Button 
               onClick={handleRefreshProfile} 
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
               Retry Fetching Profile
             </Button>
@@ -214,15 +214,15 @@ My core mission is to:
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-6">
+    <div className="min-h-screen bg-gray-50 text-gray-900 p-6">
       <div className="max-w-8xl mx-auto grid md:grid-cols-3 gap-6">
         {/* Main Profile Column */}
         <div className="md:col-span-2 space-y-6">
           {/* Profile Header */}
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center space-x-6">
-                <Avatar className="w-32 h-32 border-4 border-gray-800">
+                <Avatar className="w-32 h-32 border-4 border-gray-100">
                   {user.profilePic ? (
                     <AvatarImage 
                       src={user.profilePic} 
@@ -230,7 +230,7 @@ My core mission is to:
                       className="object-cover"
                     />
                   ) : (
-                    <AvatarFallback className="bg-blue-900/50 text-blue-300 text-3xl">
+                    <AvatarFallback className="bg-blue-100 text-blue-600 text-3xl">
                       {getInitials(user)}
                     </AvatarFallback>
                   )}
@@ -239,10 +239,10 @@ My core mission is to:
                 <div className="flex-grow">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h1 className="text-3xl font-bold text-blue-500">
+                      <h1 className="text-3xl font-bold text-blue-600">
                         {user.fullName?.firstName} {user.fullName?.lastName}
                       </h1>
-                      <Badge className="bg-blue-900/50 text-blue-300 mt-2">
+                      <Badge className="bg-blue-100 text-blue-700 mt-2 hover:bg-blue-200">
                         {user.role || "Role Not Set"}
                       </Badge>
                     </div>
@@ -253,19 +253,19 @@ My core mission is to:
                             variant="ghost" 
                             size="icon"
                             onClick={handleRefreshProfile}
-                            className="text-white/50 hover:text-blue-500"
+                            className="text-gray-500 hover:text-blue-600 hover:bg-blue-50"
                           >
                             <RefreshCw className="w-5 h-5" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent className="bg-gray-800 text-white">
+                        <TooltipContent className="bg-white text-gray-900 border border-gray-200">
                           Refresh Profile
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </div>
                   
-                  <div className="mt-4 space-y-2 text-white/70">
+                  <div className="mt-4 space-y-2 text-gray-600">
                     {user.location && (
                       <div className="flex items-center">
                         <MapPin className="w-4 h-4 mr-2" />
@@ -279,17 +279,17 @@ My core mission is to:
                     </div>
                   </div>
                   
-                  <Separator className="my-4 bg-gray-700" />
+                  <Separator className="my-4 bg-gray-200" />
                   
                   <div className="grid grid-cols-2 gap-4">
-                    <Button onClick={handleDownloadCV} className="bg-blue-600 hover:bg-blue-700">
+                    <Button onClick={handleDownloadCV} className="bg-blue-600 hover:bg-blue-700 text-white">
                       <Download className="mr-2 h-4 w-4" />
                       Download CV
                     </Button>
                     <Button 
                       onClick={handleContact} 
                       variant="outline" 
-                      className="border-whitw text-black "
+                      className="border-gray-300 text-gray-700 hover:bg-gray-50"
                     >
                       <MessageSquare className="mr-2 h-4 w-4" />
                       Contact Me
@@ -301,11 +301,11 @@ My core mission is to:
           </Card>
 
           {/* About Me Section with Markdown */}
-          <Card className="bg-gray-900 border-gray-800">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardContent className="p-6">
               <div className="flex items-center mb-4">
-                <User className="mr-3 w-5 h-5 text-blue-500" />
-                <h2 className="text-xl font-semibold text-white">About Me</h2>
+                <User className="mr-3 w-5 h-5 text-blue-600" />
+                <h2 className="text-xl font-semibold text-gray-900">About Me</h2>
               </div>
               <ReactMarkdown 
                 components={markdownComponents}
@@ -320,10 +320,10 @@ My core mission is to:
         <div className="md:col-span-1 space-y-6">
           {/* Skills Section */}
           {(user.role?.toLowerCase() === 'student' || user.role?.toLowerCase() === 'mentor') && (
-            <Card className="bg-gray-900 border-gray-800">
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center text-white">
-                  <BarChart2 className="mr-3 w-5 h-5 text-blue-500" />
+                <CardTitle className="flex items-center text-gray-900">
+                  <BarChart2 className="mr-3 w-5 h-5 text-blue-600" />
                   Skills Proficiency
                 </CardTitle>
               </CardHeader>
@@ -336,7 +336,7 @@ My core mission is to:
                       {user.mentorSchema[0].skills.map((skill, index) => (
                         <Badge 
                           key={index} 
-                          className="bg-blue-900/50 text-blue-300"
+                          className="bg-blue-100 text-blue-700 hover:bg-blue-200"
                         >
                           {skill}
                         </Badge>
@@ -344,7 +344,7 @@ My core mission is to:
                     </div>
                   </ScrollArea>
                 ) : (
-                  <p className="text-white/70 text-center">No skills available</p>
+                  <p className="text-gray-500 text-center">No skills available</p>
                 )}
               </CardContent>
             </Card>
@@ -352,10 +352,10 @@ My core mission is to:
 
           {/* Education Section */}
           {user.role?.toLowerCase() === 'student' && user.studentProfile?.education?.length ? (
-            <Card className="bg-gray-900 border-gray-800">
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center text-white">
-                  <GraduationCap className="mr-3 w-5 h-5 text-blue-500" />
+                <CardTitle className="flex items-center text-gray-900">
+                  <GraduationCap className="mr-3 w-5 h-5 text-blue-600" />
                   Education
                 </CardTitle>
               </CardHeader>
@@ -365,10 +365,10 @@ My core mission is to:
                     {user.studentProfile.education.map((edu, index) => (
                       <div 
                         key={index} 
-                        className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:bg-gray-700 transition-colors"
+                        className="bg-gray-50 p-4 rounded-lg border border-gray-200 hover:bg-gray-100 transition-colors"
                       >
-                        <h4 className="font-semibold text-blue-400">{edu.degree}</h4>
-                        <p className="text-white/70">
+                        <h4 className="font-semibold text-blue-700">{edu.degree}</h4>
+                        <p className="text-gray-600">
                           {edu.institution} - Graduated {edu.graduationYear}
                         </p>
                       </div>
@@ -381,26 +381,26 @@ My core mission is to:
 
           {/* Professional Details Section */}
           {user.role?.toLowerCase() === 'mentor' && user.mentorSchema?.[0] ? (
-            <Card className="bg-gray-900 border-gray-800">
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardHeader>
-                <CardTitle className="flex items-center text-white">
-                  <Briefcase className="mr-3 w-5 h-5 text-blue-500" />
+                <CardTitle className="flex items-center text-gray-900">
+                  <Briefcase className="mr-3 w-5 h-5 text-blue-600" />
                   Professional Details
                 </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-blue-400">
+                    <h4 className="font-semibold text-blue-700">
                       {user.mentorSchema[0].companyName || "Company Not Specified"}
                     </h4>
-                    <p className="text-white/70 mt-2">
+                    <p className="text-gray-600 mt-2">
                       {user.mentorSchema[0].description || "No description provided"}
                     </p>
                   </div>
                   <div>
-                    <h5 className="font-medium mb-2 text-blue-400">Experience</h5>
-                    <p className="text-white/70">
+                    <h5 className="font-medium mb-2 text-blue-700">Experience</h5>
+                    <p className="text-gray-600">
                       {user.mentorSchema[0].experience || "Experience not specified"}
                     </p>
                   </div>
