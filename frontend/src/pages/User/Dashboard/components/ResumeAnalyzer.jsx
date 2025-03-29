@@ -149,7 +149,7 @@ const OCRScanner = () => {
         formData.append('file', file);
 
         try {
-            const response = await fetch('https://indus-python-server.onrender.com/ocr', {
+            const response = await fetch('http://localhost:5000/ocr', {
                 method: 'POST',
                 body: formData,
             });
