@@ -19,7 +19,7 @@ import { formatJobDate } from '@/pages/Feed/components/Helper';
 
 const JobCard = ({ job }) => {
   const navigate = useNavigate();
-
+console.log(job)
   return (
     <div 
       key={job._id} 
@@ -32,8 +32,8 @@ const JobCard = ({ job }) => {
             <Briefcase className="h-5 w-5" />
           </div>
           <div>
-            <h3 className="font-medium text-gray-900">{job.title}</h3>
-            <p className="text-sm text-gray-500">{job.company}</p>
+            <h3 className="font-medium text-gray-900">{job.jobTitle}</h3>
+            <p className="text-sm text-gray-500">{job.companyName}</p>
           </div>
         </div>
         <Badge variant="outline" className="text-xs bg-white text-gray-700 border-gray-300">

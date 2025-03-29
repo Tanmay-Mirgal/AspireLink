@@ -24,12 +24,7 @@ import {
     const user = JSON.parse(localStorage.getItem('user'))
     return (
       <Sidebar className="border-r z-10 top-0 sticky">
-        <SidebarHeader className="border-b px-6 py-3">
-          <div className="flex items-center gap-2">
-            <LayoutDashboard className="h-6 w-6" />
-            <span className="text-lg font-semibold">Student Portal</span>
-          </div>
-        </SidebarHeader>
+        
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>

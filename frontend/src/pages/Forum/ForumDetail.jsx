@@ -83,14 +83,14 @@ const Message = React.memo(({ message, isCurrentUser }) => {
       <div
         className={`
           p-3 rounded-lg max-w-xs lg:max-w-md 
-          ${isCurrentUser ? "bg-primary text-primary-foreground rounded-tr-none" : "bg-card border rounded-tl-none"}
+          ${isCurrentUser ? "bg-gray-200 text-gray-900 rounded-tr-none" : "bg-gray-100 text-gray-800 rounded-tl-none"}
         `}
       >
         <div className="flex justify-between items-start mb-1">
-          <span className={`text-sm font-medium ${isCurrentUser ? "text-primary-foreground/90" : ""}`}>
+          <span className={`text-sm font-medium ${isCurrentUser ? "text-gray-700" : "text-gray-600"}`}>
             {isCurrentUser ? "You" : senderFirstName}
           </span>
-          <span className={`text-xs ${isCurrentUser ? "text-primary-foreground/70" : "text-muted-foreground"} ml-2`}>
+          <span className={`text-xs ${isCurrentUser ? "text-gray-600" : "text-gray-500"} ml-2`}>
             {formattedTime}
           </span>
         </div>
@@ -110,14 +110,14 @@ const Message = React.memo(({ message, isCurrentUser }) => {
         )}
         
         <span
-          className={`text-xs ${isCurrentUser ? "text-primary-foreground/70" : "text-muted-foreground"} block text-right mt-1`}
+          className={`text-xs ${isCurrentUser ? "text-gray-600" : "text-gray-500"} block text-right mt-1`}
         >
           {formattedDate}
         </span>
       </div>
       {isCurrentUser && (
         <Avatar className="h-8 w-8 ml-2 mt-1">
-          <AvatarFallback className="bg-primary-foreground text-primary">
+          <AvatarFallback className="bg-gray-700 text-white">
             {avatarChar}
           </AvatarFallback>
         </Avatar>

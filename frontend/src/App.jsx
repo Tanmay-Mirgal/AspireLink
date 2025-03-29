@@ -1,5 +1,5 @@
-import React, { lazy, Suspense } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import ModernNavbar from './components/sidebar/ModernNavbar';
 import ProtectedRoute from './components/protected-route/ProtectedRoute';
@@ -39,6 +39,15 @@ const LoadingFallback = () => (
 
 function App() {
   const user = JSON.parse(localStorage.getItem('user'));
+  const location = useLocation();
+  const [showFooter, setShowFooter] = useState(true);
+  
+  // Check if current path is a forum detail page
+  useEffect(() => {
+    // Using regex to match forum/:id pattern
+    const isForumDetailPage = /^\/forum\/[^/]+$/.test(location.pathname);
+    setShowFooter(!isForumDetailPage);
+  }, [location.pathname]);
   
   return (
     <>
@@ -69,7 +78,7 @@ function App() {
           <Route path="/resume" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
         </Routes>
       </Suspense>
-      <Footer/>
+      {showFooter && <Footer />}
       <Toaster />
     </>
   );
