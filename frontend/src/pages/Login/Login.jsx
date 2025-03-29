@@ -87,7 +87,7 @@ const LoginPage = () => {
                 <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
               </svg>
             </div>
-            <span className="text-xl font-bold text-blue-600">TreeTex</span>
+            <span className="text-xl font-bold text-blue-600">AspireLink</span>
           </div>
         </div>
 
