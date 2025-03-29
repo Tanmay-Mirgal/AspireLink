@@ -25,11 +25,33 @@ export function OverviewTab({
 
 // Student Profile Card
 function StudentProfileCard({ studentProfile }) {
-    const user = JSON.parse(localStorage.getItem('user'))
+  const user = JSON.parse(localStorage.getItem('user'))
   const dummyBadges = [
-    { name: "Profile Complete", icon: Award, color: "bg-green-500" },
-    { name: "Fast Learner", icon: BookOpen, color: "bg-blue-500" },
-    { name: "Team Player", icon: Users, color: "bg-purple-500" },
+    // { 
+    //   name: "Profile Complete", 
+    //   imageUrl: "https://res.cloudinary.com/dmspullpt/image/upload/v1743192423/WhatsApp_Image_2025-03-29_at_01.14.39_3b732309_vzigx9.jpg" 
+       
+    // },
+    { 
+      name: "Completed the First Course", 
+      imageUrl: "https://res.cloudinary.com/dmspullpt/image/upload/v1743192478/WhatsApp_Image_2025-03-29_at_01.15.07_bfebd9cf_uhkjtg.jpg" 
+       
+    },
+    { 
+      name: "Confident Communicator", 
+      imageUrl: "https://res.cloudinary.com/dmspullpt/image/upload/v1743192514/WhatsApp_Image_2025-03-29_at_01.15.45_d1c354c3_gvy4vh.jpg"
+      
+    },
+    { 
+      name: "Certified Learner", 
+      imageUrl: "https://res.cloudinary.com/dmspullpt/image/upload/v1743192557/WhatsApp_Image_2025-03-29_at_01.16.17_d5928d91_ytdb1p.jpg"
+       
+    },
+    { 
+      name: "Mock Interview Expert", 
+      imageUrl: "https://res.cloudinary.com/dmspullpt/image/upload/v1743192589/WhatsApp_Image_2025-03-29_at_01.16.43_bf11ac7e_ebk1yf.jpg"
+   
+    },
   ];
   return (
     <Card>
@@ -43,11 +65,15 @@ function StudentProfileCard({ studentProfile }) {
           </div>
           <div className="flex gap-2">
             {dummyBadges.map((badge, index) => (
-              <div key={index} className="flex flex-col items-center">
-                <div className={`${badge.color} p-2 rounded-full`}>
-                  <badge.icon className="h-4 w-4 text-white" />
+              <div key={index} className="flex flex-col items-center ">
+                <div className={`${badge.color} p-2 rounded-full overflow-hidden `}>
+                  <img 
+                    src={badge.imageUrl} 
+                    alt={badge.name} 
+                    className="h-20 w-20 object-cover  "
+                  />
                 </div>
-                <span className="text-xs mt-1">{badge.name}</span>
+                <span className="text-xs mt-1 px-5">{badge.name}</span>
               </div>
             ))}
           </div>
