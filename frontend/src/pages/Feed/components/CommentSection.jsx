@@ -8,7 +8,6 @@ import usePostStore from '@/store/usePostStore';
 import { useAuthStore } from '@/store/useAuthStore';
 import { getFullName, getInitials, formatDate } from '@/pages/Feed/components/Helper';
 
-
 export const CommentSection = ({ post, isVisible }) => {
   const { addComment, deleteComment, isLoading } = usePostStore();
   const { user } = useAuthStore();
@@ -39,7 +38,7 @@ export const CommentSection = ({ post, isVisible }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="mt-4 space-y-4 px-4 pb-4">
+    <div className="mt-4 space-y-4 px-4 pb-4 bg-white">
       {/* Comment form */}
       <form onSubmit={handleAddComment} className="flex space-x-2">
         <Avatar className="w-8 h-8">
@@ -50,13 +49,14 @@ export const CommentSection = ({ post, isVisible }) => {
           value={commentContent}
           onChange={(e) => setCommentContent(e.target.value)}
           placeholder="Write a comment..."
-          className="flex-grow"
+          className="flex-grow bg-white border-gray-300"
           disabled={isLoading}
         />
         <Button 
-          type="submit" 
-          variant="outline" 
+          type="submit"
+          variant="outline"
           size="sm"
+          className="bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
           disabled={!commentContent.trim() || isLoading}
         >
           Post
@@ -70,22 +70,22 @@ export const CommentSection = ({ post, isVisible }) => {
             <div key={comment._id} className="flex space-x-2">
               <Avatar className="w-8 h-8">
                 <AvatarImage 
-                  src={comment.author?.profilePic} 
-                  alt={getFullName(comment.author)} 
+                  src={comment.author?.profilePic}
+                  alt={getFullName(comment.author)}
                 />
                 <AvatarFallback>{getInitials(comment.author)}</AvatarFallback>
               </Avatar>
-              <div className="flex-grow bg-muted rounded-md p-2">
+              <div className="flex-grow bg-gray-50 rounded-md p-2 border border-gray-200">
                 <div className="flex justify-between items-start">
                   <div>
-                    <p className="font-semibold text-sm">{getFullName(comment.author)}</p>
-                    <p className="text-xs text-muted-foreground">{formatDate(comment.createdAt)}</p>
+                    <p className="font-semibold text-sm text-gray-900">{getFullName(comment.author)}</p>
+                    <p className="text-xs text-gray-500">{formatDate(comment.createdAt)}</p>
                   </div>
                   {user && comment.author && (comment.author._id === user._id || comment.author === user._id) && (
                     <Button 
-                      variant="ghost" 
-                      size="icon" 
-                      className="h-6 w-6"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 text-gray-500 hover:text-gray-700 hover:bg-gray-100"
                       onClick={() => handleDeleteComment(comment._id)}
                       disabled={isLoading}
                     >
@@ -93,12 +93,12 @@ export const CommentSection = ({ post, isVisible }) => {
                     </Button>
                   )}
                 </div>
-                <p className="text-sm mt-1">{comment.content}</p>
+                <p className="text-sm mt-1 text-gray-800">{comment.content}</p>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-sm text-muted-foreground text-center">No comments yet. Be the first to comment!</p>
+          <p className="text-sm text-gray-500 text-center">No comments yet. Be the first to comment!</p>
         )}
       </div>
     </div>

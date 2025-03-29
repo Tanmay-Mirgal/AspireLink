@@ -117,7 +117,7 @@ const MedicalSocialFeed = () => {
   };
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground p-0 w-full">
+    <div className="min-h-screen bg-gray-50 text-gray-900 p-0 w-full">
       <div className="w-full mx-auto grid grid-cols-12 gap-4 p-4">
         {/* Left Profile Section */}
         <ProfileSidebar 
@@ -132,15 +132,15 @@ const MedicalSocialFeed = () => {
 
           {/* Loading State */}
           {isLoading && posts.length === 0 && (
-            <div className="flex justify-center items-center p-8">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="ml-2">Loading posts...</span>
+            <div className="flex justify-center items-center p-8 bg-white rounded-md border border-gray-200">
+              <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+              <span className="ml-2 text-gray-700">Loading posts...</span>
             </div>
           )}
 
           {/* Error State */}
           {error && (
-            <div className="p-4 mb-4 flex items-center bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg">
+            <div className="p-4 mb-4 flex items-center bg-red-50 text-red-700 rounded-lg border border-red-200">
               <AlertCircle className="h-5 w-5 mr-2" />
               <span>Error: {error}</span>
             </div>
@@ -148,16 +148,16 @@ const MedicalSocialFeed = () => {
 
           {/* Posts Display */}
           {posts.map((post) => (
-            <Card key={post._id} className="w-full">
-              <CardHeader className="flex flex-row items-center justify-between p-4">
+            <Card key={post._id} className="w-full bg-white border border-gray-200">
+              <CardHeader className="flex flex-row items-center justify-between p-4 border-b border-gray-100">
                 <div className="flex items-center space-x-3">
                   <Avatar>
                     <AvatarImage src={post.author?.profilePic} />
                     <AvatarFallback>{getInitials(post.author)}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <p className="font-semibold">{getFullName(post.author)}</p>
-                    <p className="text-xs text-muted-foreground">{formatDate(post.createdAt)}</p>
+                    <p className="font-semibold text-gray-900">{getFullName(post.author)}</p>
+                    <p className="text-xs text-gray-500">{formatDate(post.createdAt)}</p>
                   </div>
                 </div>
                 
@@ -173,8 +173,8 @@ const MedicalSocialFeed = () => {
               </CardHeader>
               
               <CardContent className="p-4 pt-0">
-                {post.title && <h3 className="text-lg font-semibold mb-2">{post.title}</h3>}
-                <p className="mb-3">{post.content}</p>
+                {post.title && <h3 className="text-lg font-semibold mb-2 text-gray-900">{post.title}</h3>}
+                <p className="mb-3 text-gray-800">{post.content}</p>
                 
                 {post.img && (
                   <img 
@@ -184,7 +184,7 @@ const MedicalSocialFeed = () => {
                   />
                 )}
                 
-                <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <div className="flex items-center justify-between text-sm text-gray-500">
                   <div>
                     {post.likes && post.likes.length > 0 && (
                       <span>{post.likes.length} {post.likes.length === 1 ? 'like' : 'likes'}</span>
@@ -198,23 +198,30 @@ const MedicalSocialFeed = () => {
                 </div>
               </CardContent>
               
-              <CardFooter className="border-t p-4 flex justify-between">
+              <CardFooter className="border-t border-gray-100 p-4 flex justify-between">
                 <Button 
                   variant="ghost" 
                   onClick={() => likePost(post._id)}
-                  className={hasLiked(post) ? "text-primary" : ""}
+                  className={hasLiked(post) ? "text-blue-600 hover:bg-blue-50" : "text-gray-700 hover:bg-gray-50"}
                 >
                   {hasLiked(post) ? (
-                    <Heart className="mr-2 h-4 w-4 fill-primary" />
+                    <Heart className="mr-2 h-4 w-4 fill-blue-600" />
                   ) : (
                     <ThumbsUp className="mr-2 h-4 w-4" />
                   )}
                   Like
                 </Button>
-                <Button variant="ghost" onClick={() => toggleComments(post._id)}>
+                <Button 
+                  variant="ghost" 
+                  onClick={() => toggleComments(post._id)}
+                  className="text-gray-700 hover:bg-gray-50"
+                >
                   <MessageCircle className="mr-2 h-4 w-4" /> Comment
                 </Button>
-                <Button variant="ghost">
+                <Button 
+                  variant="ghost"
+                  className="text-gray-700 hover:bg-gray-50"
+                >
                   <Share2 className="mr-2 h-4 w-4" /> Share
                 </Button>
               </CardFooter>
@@ -234,6 +241,7 @@ const MedicalSocialFeed = () => {
                 variant="outline" 
                 onClick={loadMorePosts}
                 disabled={isLoading}
+                className="bg-white text-gray-800 border-gray-300 hover:bg-gray-50"
               >
                 {isLoading ? (
                   <>
@@ -247,8 +255,8 @@ const MedicalSocialFeed = () => {
           
           {/* No Posts Message */}
           {!isLoading && posts.length === 0 && (
-            <Card className="w-full">
-              <CardContent className="p-8 text-center text-muted-foreground">
+            <Card className="w-full bg-white border border-gray-200">
+              <CardContent className="p-8 text-center text-gray-500">
                 <p>No posts available. Be the first to create a post!</p>
               </CardContent>
             </Card>
@@ -268,18 +276,18 @@ const MedicalSocialFeed = () => {
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white border border-gray-200">
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete this post?</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-gray-900">Are you sure you want to delete this post?</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-600">
               This action cannot be undone. The post will be permanently deleted from our servers.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setPostToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="bg-white text-gray-800 border-gray-300 hover:bg-gray-50">Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={handleDeletePost}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-red-600 text-white hover:bg-red-700"
             >
               Delete
             </AlertDialogAction>
