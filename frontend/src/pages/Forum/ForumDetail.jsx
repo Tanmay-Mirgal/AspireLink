@@ -158,7 +158,6 @@ const Message = React.memo(({ message, isCurrentUser }) => {
     </div>
   );
 });
-
 const MessageInput = ({ forumId, sendMessage }) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
@@ -169,8 +168,6 @@ const MessageInput = ({ forumId, sendMessage }) => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
-    // No file type validation - accepting all file types
     
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
@@ -237,23 +234,32 @@ const MessageInput = ({ forumId, sendMessage }) => {
 
   return (
     <div className="p-4 bg-card border-t">
-      {/* File preview */}
+      {/* File preview - remains visible while sending */}
       {uploadedFile && (
         <div className="mb-2 relative">
           <div className="relative rounded-md overflow-hidden border border-input inline-block p-2">
             {filePreview ? (
-              <img src={filePreview} alt="Preview" className="h-20 object-cover" />
+              <div className="relative">
+                <img src={filePreview} alt="Preview" className="h-20 object-cover" />
+                {isSending && (
+                  <div className="absolute inset-0 bg-background/50 flex items-center justify-center">
+                    <Loader2 size={24} className="animate-spin text-primary" />
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="flex items-center gap-2">
                 <div className="bg-primary/10 p-2 rounded">
                   <Image size={16} className="text-primary" />
                 </div>
                 <span className="text-sm">{uploadedFile.name}</span>
+                {isSending && <Loader2 size={14} className="ml-2 animate-spin text-primary" />}
               </div>
             )}
             <button 
               onClick={removeFile}
               className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 hover:bg-black/90"
+              disabled={isSending}
             >
               <X size={14} />
             </button>
@@ -262,17 +268,24 @@ const MessageInput = ({ forumId, sendMessage }) => {
       )}
       
       <div className="flex items-center gap-2">
-        <textarea
-          className="flex-1 min-h-[44px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-          placeholder="Type a message..."
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          rows="1"
-          disabled={isSending}
-        />
+        <div className="relative flex-1">
+          <textarea
+            className="w-full min-h-[44px] resize-none rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            placeholder={isSending ? "Sending message..." : "Type a message..."}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            rows="1"
+            disabled={isSending}
+          />
+          {isSending && (
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+              <Loader2 size={16} className="animate-spin text-muted-foreground" />
+            </div>
+          )}
+        </div>
         
-        {/* File upload button */}
+        {/* File upload button - disabled while sending */}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -282,6 +295,7 @@ const MessageInput = ({ forumId, sendMessage }) => {
                 size="icon" 
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isSending}
+                className={isSending ? "opacity-50 cursor-not-allowed" : ""}
               >
                 <Image size={18} />
                 <input
@@ -295,16 +309,17 @@ const MessageInput = ({ forumId, sendMessage }) => {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              Add a file
+              {isSending ? "Sending..." : "Add a file"}
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
         
-        {/* Send button */}
+        {/* Send button - shows loader while sending */}
         <Button 
           onClick={handleSend} 
           disabled={(!message.trim() && !uploadedFile) || isSending} 
           size="icon"
+          className="relative"
         >
           {isSending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
         </Button>
@@ -312,16 +327,25 @@ const MessageInput = ({ forumId, sendMessage }) => {
     </div>
   );
 };
-
 // Main Forum Component
+// Main Forum Component with message sending indicators
 export const ForumDetail = () => {
   const { id } = useParams()
-  const { currentForum, isLoading, error, fetchForumById, joinForum, sendMessage, addSocketMessage, leaveForum } =
-    useForumStore()
+  const { 
+    currentForum, 
+    isLoading, 
+    error, 
+    fetchForumById, 
+    joinForum, 
+    sendMessage, 
+    addSocketMessage, 
+    leaveForum 
+  } = useForumStore()
 
   const [currentUser, setCurrentUser] = useState(null)
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false)
   const [isJoining, setIsJoining] = useState(false)
+  const [pendingMessage, setPendingMessage] = useState(null)
   const messagesEndRef = useRef(null)
 
   // Check if user is a member of the forum
@@ -358,6 +382,83 @@ export const ForumDetail = () => {
       }
     }
   }, [id, joinForum, isMember, isForumCreator])
+
+  // Enhanced message sending with pending indicator
+  const handleSendMessage = useCallback(async (forumId, formData) => {
+    // Create a temporary pending message
+    const tempId = `temp-${Date.now()}`
+    const content = formData.get('content') || ''
+    
+    // Get file info if exists
+    let fileInfo = null
+    const fileData = formData.get('image')
+    if (fileData) {
+      fileInfo = {
+        name: fileData.name,
+        type: fileData.type,
+        // Create preview URL for images
+        preview: fileData.type.startsWith('image/') 
+          ? URL.createObjectURL(fileData)
+          : null
+      }
+    }
+    
+    // Create pending message
+    const pendingMsg = {
+      _id: tempId,
+      content,
+      timestamp: new Date().toISOString(),
+      sender: currentUser,
+      isPending: true,
+      fileInfo
+    }
+    
+    // Add to UI immediately
+    setPendingMessage(pendingMsg)
+    
+    try {
+      // Scroll to new message
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+      }, 100)
+      
+      // Call actual send function
+      await sendMessage(forumId, formData)
+      
+      // Clear pending message after successful send
+      setPendingMessage(null)
+      
+      // Revoke any object URLs to prevent memory leaks
+      if (fileInfo?.preview) {
+        URL.revokeObjectURL(fileInfo.preview)
+      }
+    } catch (error) {
+      console.error("Failed to send message:", error)
+      
+      // Keep pending message but mark as failed
+      setPendingMessage(prev => {
+        if (prev && prev._id === tempId) {
+          return { ...prev, isError: true }
+        }
+        return prev
+      })
+      
+      // Clean up after 5 seconds to prevent indefinite error display
+      setTimeout(() => {
+        setPendingMessage(prev => {
+          if (prev && prev._id === tempId) {
+            return null
+          }
+          return prev
+        })
+        
+        // Revoke any object URLs
+        if (fileInfo?.preview) {
+          URL.revokeObjectURL(fileInfo.preview)
+        }
+      }, 5000)
+    }
+  }, [currentUser, sendMessage])
 
   const handleReceiveMessage = useCallback(
     (data) => {
@@ -400,6 +501,75 @@ export const ForumDetail = () => {
       messagesEndRef.current.scrollIntoView()
     }
   }, [currentForum?.messages?.length])
+
+  // Component for rendering pending message
+  const PendingMessage = ({ message }) => {
+    const isImage = message.fileInfo?.type.startsWith('image/')
+    
+    return (
+      <div className="flex justify-end mb-4">
+        <div className="relative p-3 bg-gray-200 text-gray-900 rounded-lg rounded-tr-none max-w-xs lg:max-w-md opacity-75">
+          <div className="flex justify-between items-start mb-1">
+            <span className="text-sm font-medium text-gray-700">You</span>
+            <span className="text-xs text-gray-600 ml-2">
+              Just now
+            </span>
+          </div>
+          
+          <p className="break-words">{message.content || ""}</p>
+          
+          {/* Display file if present */}
+          {message.fileInfo && (
+            <div className="mt-2 rounded-md overflow-hidden border border-gray-200">
+              {isImage && message.fileInfo.preview ? (
+                <div className="relative">
+                  <img 
+                    src={message.fileInfo.preview} 
+                    alt="Preview" 
+                    className="max-w-full h-auto object-cover opacity-75"
+                  />
+                </div>
+              ) : (
+                <div className="p-3 bg-gray-50 flex items-center gap-2">
+                  <div className="bg-primary/10 p-2 rounded">
+                    <Image size={16} className="text-primary" />
+                  </div>
+                  <span className="text-sm font-medium truncate">
+                    {message.fileInfo.name}
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {/* Sending indicator */}
+          <div className="absolute -bottom-6 right-2 flex items-center gap-1">
+            <span className="text-xs text-gray-500">
+              {message.isError ? "Failed to send" : "Sending..."}
+            </span>
+            {!message.isError && 
+              <Loader2 size={12} className="animate-spin text-gray-500" />
+            }
+            {message.isError && 
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-5 text-xs text-red-500 px-1"
+              >
+                Retry
+              </Button>
+            }
+          </div>
+        </div>
+        
+        <Avatar className="h-8 w-8 ml-2 mt-1">
+          <AvatarFallback className="bg-gray-700 text-white">
+            {currentUser?.fullName?.firstName?.charAt(0) || "?"}
+          </AvatarFallback>
+        </Avatar>
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (
@@ -556,7 +726,7 @@ export const ForumDetail = () => {
 
         <ScrollArea className="flex-1">
           <div className="p-4">
-            {currentForum.messages.length === 0 ? (
+            {currentForum.messages.length === 0 && !pendingMessage ? (
               <div className="flex flex-col items-center justify-center py-12">
                 <div className="rounded-full bg-primary/10 p-4 mb-4">
                   <MessageCircle size={24} className="text-primary" />
@@ -575,6 +745,12 @@ export const ForumDetail = () => {
                     isCurrentUser={currentUser && message.sender._id === currentUser._id}
                   />
                 ))}
+                
+                {/* Show pending message if exists */}
+                {pendingMessage && (
+                  <PendingMessage message={pendingMessage} />
+                )}
+                
                 <div ref={messagesEndRef}></div>
               </div>
             )}
@@ -582,7 +758,7 @@ export const ForumDetail = () => {
         </ScrollArea>
 
         {canPostMessage ? (
-          <MessageInput forumId={currentForum._id} sendMessage={sendMessage} />
+          <MessageInput forumId={currentForum._id} sendMessage={handleSendMessage} />
         ) : (
           <div className="p-4 bg-muted/50 border-t text-center text-muted-foreground flex items-center justify-center gap-2">
             <UserPlus size={16} />
@@ -595,6 +771,5 @@ export const ForumDetail = () => {
       </div>
     </div>
   )
-}
-
+};
 
