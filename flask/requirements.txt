@@ -1,0 +1,7 @@
+gunicorn
+opencv-python
+pytesseract
+spacy
+pdf2image
+flask
+flask_cors
