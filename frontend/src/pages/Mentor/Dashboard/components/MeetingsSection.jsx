@@ -210,9 +210,7 @@ export function MeetingsSection({ role = 'mentor' }) {
                     let studentNames = "students";
                     if (meeting.studentId && meeting.studentId.length > 0) {
                       if (typeof meeting.studentId[0] === 'object') {
-                        studentNames = meeting.studentId.map(student => 
-                          `${student.fullName?.firstName || ''} ${student.fullName?.lastName || ''}`
-                        ).join(', ');
+                        studentNames = `${meeting.studentId[0].fullName?.firstName || ''} ${meeting.studentId[0].fullName?.lastName || ''}`;
                       }
                     }
                     

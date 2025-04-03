@@ -53,6 +53,7 @@ const MembersSidebar = ({ members, isCollapsed, toggleSidebar }) => (
 )
 
 // Message Component
+// Message Component
 const Message = React.memo(({ message, isCurrentUser }) => {
   // Ensure the message has the expected properties before accessing them
   if (!message || !message.sender || !message.sender.fullName) {
@@ -72,6 +73,21 @@ const Message = React.memo(({ message, isCurrentUser }) => {
 
   // Safely get the first character for the avatar
   const avatarChar = senderFirstName.charAt(0) || "?";
+
+  // Check file type to determine how to display it
+  const isImage = message.image && 
+    (message.image.endsWith('.jpg') || 
+     message.image.endsWith('.jpeg') || 
+     message.image.endsWith('.png') || 
+     message.image.endsWith('.gif') ||
+     message.image.endsWith('.webp'));
+
+  // Extract filename from path
+  const getFileName = (path) => {
+    if (!path) return "";
+    const parts = path.split('/');
+    return parts[parts.length - 1];
+  };
 
   return (
     <div className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} mb-4`}>
@@ -96,16 +112,33 @@ const Message = React.memo(({ message, isCurrentUser }) => {
         </div>
         <p className="break-words">{message.content || ""}</p>
         
-        {/* Display image if present */}
+        {/* Display file based on type */}
         {message.image && (
-          <div className="mt-2 rounded-md overflow-hidden">
-            <img 
-              src={message.image} 
-              alt="Message attachment" 
-              className="max-w-full h-auto object-cover"
-              onClick={() => window.open(message.image, '_blank')}
-              style={{ cursor: 'pointer' }}
-            />
+          <div className="mt-2 rounded-md overflow-hidden border border-gray-200">
+            {isImage ? (
+              // Image display
+              <img 
+                src={message.image} 
+                alt="Image attachment" 
+                className="max-w-full h-auto object-cover"
+                onClick={() => window.open(message.image, '_blank')}
+                style={{ cursor: 'pointer' }}
+              />
+            ) : (
+              // Non-image file display
+              <div 
+                className="p-3 bg-gray-50 flex items-center gap-2"
+                onClick={() => window.open(message.image, '_blank')}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="bg-primary/10 p-2 rounded">
+                  <Image size={16} className="text-primary" />
+                </div>
+                <span className="text-sm font-medium truncate">
+                  {getFileName(message.image)}
+                </span>
+              </div>
+            )}
           </div>
         )}
         
@@ -125,52 +158,51 @@ const Message = React.memo(({ message, isCurrentUser }) => {
     </div>
   );
 });
-// Enhanced Message Input Component with localized loading
-// Enhanced Message Input Component with image upload
+
 const MessageInput = ({ forumId, sendMessage }) => {
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [filePreview, setFilePreview] = useState(null);
   const fileInputRef = useRef(null);
 
-  const handleImageChange = (e) => {
+  const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     
-    // Validate file type
-    const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!validTypes.includes(file.type)) {
-      alert('Please select a valid image file (JPEG, PNG, GIF, WEBP)');
-      return;
-    }
+    // No file type validation - accepting all file types
     
     // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
-      alert('Image size should be less than 5MB');
+      alert('File size should be less than 5MB');
       return;
     }
     
-    setImageFile(file);
+    setUploadedFile(file);
     
-    // Create a preview
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result);
-    };
-    reader.readAsDataURL(file);
+    // Create a preview if it's an image
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFilePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // For non-image files, just show the filename
+      setFilePreview(null);
+    }
   };
   
-  const removeImage = () => {
-    setImageFile(null);
-    setImagePreview(null);
+  const removeFile = () => {
+    setUploadedFile(null);
+    setFilePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
 
   const handleSend = useCallback(async () => {
-    if (!message.trim() && !imageFile) return;
+    if (!message.trim() && !uploadedFile) return;
     
     setIsSending(true);
     try {
@@ -178,14 +210,14 @@ const MessageInput = ({ forumId, sendMessage }) => {
       const formData = new FormData();
       formData.append('content', message.trim());
       
-      if (imageFile) {
-        formData.append('image', imageFile);
+      if (uploadedFile) {
+        formData.append('image', uploadedFile); // Keeping the field name 'image' for backend compatibility
       }
       
       await sendMessage(forumId, formData);
       setMessage("");
-      setImageFile(null);
-      setImagePreview(null);
+      setUploadedFile(null);
+      setFilePreview(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -194,7 +226,7 @@ const MessageInput = ({ forumId, sendMessage }) => {
     } finally {
       setIsSending(false);
     }
-  }, [forumId, message, imageFile, sendMessage]);
+  }, [forumId, message, uploadedFile, sendMessage]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -205,13 +237,22 @@ const MessageInput = ({ forumId, sendMessage }) => {
 
   return (
     <div className="p-4 bg-card border-t">
-      {/* Image preview */}
-      {imagePreview && (
+      {/* File preview */}
+      {uploadedFile && (
         <div className="mb-2 relative">
-          <div className="relative rounded-md overflow-hidden border border-input inline-block">
-            <img src={imagePreview} alt="Preview" className="h-20 object-cover" />
+          <div className="relative rounded-md overflow-hidden border border-input inline-block p-2">
+            {filePreview ? (
+              <img src={filePreview} alt="Preview" className="h-20 object-cover" />
+            ) : (
+              <div className="flex items-center gap-2">
+                <div className="bg-primary/10 p-2 rounded">
+                  <Image size={16} className="text-primary" />
+                </div>
+                <span className="text-sm">{uploadedFile.name}</span>
+              </div>
+            )}
             <button 
-              onClick={removeImage}
+              onClick={removeFile}
               className="absolute top-1 right-1 bg-black/70 text-white rounded-full p-1 hover:bg-black/90"
             >
               <X size={14} />
@@ -231,7 +272,7 @@ const MessageInput = ({ forumId, sendMessage }) => {
           disabled={isSending}
         />
         
-        {/* Image upload button */}
+        {/* File upload button */}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -246,15 +287,15 @@ const MessageInput = ({ forumId, sendMessage }) => {
                 <input
                   type="file"
                   ref={fileInputRef}
-                  accept="image/jpeg,image/png,image/gif,image/webp"
+                  accept="*/*" // Allow all file types
                   className="hidden"
-                  onChange={handleImageChange}
+                  onChange={handleFileChange}
                   disabled={isSending}
                 />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              Add an image
+              Add a file
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -262,7 +303,7 @@ const MessageInput = ({ forumId, sendMessage }) => {
         {/* Send button */}
         <Button 
           onClick={handleSend} 
-          disabled={(!message.trim() && !imageFile) || isSending} 
+          disabled={(!message.trim() && !uploadedFile) || isSending} 
           size="icon"
         >
           {isSending ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
@@ -555,4 +596,5 @@ export const ForumDetail = () => {
     </div>
   )
 }
+
 

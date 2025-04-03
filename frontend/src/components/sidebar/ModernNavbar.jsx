@@ -44,7 +44,8 @@ const ModernNavbar = () => {
     { icon: <Users className="h-4 w-4" />, key: "community", path: "/feed" },
     { icon: <Briefcase className="h-4 w-4" />, key: "jobs", path: "/jobs" },
     { icon: <Briefcase className="h-4 w-4" />, key: "projects", path: "/projects" },
-    { icon: <Video className="h-4 w-4" />, key: "meeting", path: "/meeting" }
+    { icon: <Video className="h-4 w-4" />, key: "meeting", path: "/meeting" },
+    { icon: <Send className="h-4 w-4" />, key: "courses", path: "/courses" }
   ];
 
   // Toggle mobile menu

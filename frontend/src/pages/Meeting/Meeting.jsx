@@ -72,9 +72,9 @@ function MeetingPage() {
   }, [navigate, roomId, location.search]);
 
   return (
-    <div className="w-full h-screen  flex flex-col">
+    <div className="w-full h-[90vh]  flex flex-col">
       
-      <div id="meeting-container" className="flex-grow h-screen"></div>
+      <div id="meeting-container" className="flex-grow h-full"></div>
       
     </div>
   );

@@ -1,83 +1,246 @@
-import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import ModernNavbar from './components/sidebar/ModernNavbar';
-import ProtectedRoute from './components/protected-route/ProtectedRoute';
+import React, { lazy, Suspense, useEffect, useState } from "react";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import ModernNavbar from "./components/sidebar/ModernNavbar";
+import ProtectedRoute from "./components/protected-route/ProtectedRoute";
 
-import Home from './pages/Home/Home';
-import { ForumDetail } from './pages/Forum/ForumDetail';
-import Forums from './pages/Forum/Forums';
-import ResumeBuilder from './pages/Resume/Resume';
-import Footer from './components/Footer/Footer';
-import { Loader } from 'lucide-react';
+import Home from "./pages/Home/Home";
+import { ForumDetail } from "./pages/Forum/ForumDetail";
+import Forums from "./pages/Forum/Forums";
+import ResumeBuilder from "./pages/Resume/Resume";
+import Footer from "./components/Footer/Footer";
+import { Loader } from "lucide-react";
+import CoursesPage from "./pages/Courses/CoursesPage";
 
-const Signup = lazy(() => import('./pages/Signup/Signup'));
-const Login = lazy(() => import('./pages/Login/Login'));
-const Role = lazy(() => import('./pages/Role/Role'));
-const MentorCompleteProfile = lazy(() => import('./pages/Mentor/CompleteProfile/CompleteProfile'));
-const StudentCompleteProfile = lazy(() => import('./pages/User/CompleteProfile/CompleteProfile'));
-const Dashboard = lazy(() => import('./pages/Admin/Dashboard/Dashboard'));
-const MentorDashboard = lazy(() => import('./pages/Mentor/Dashboard/Dashboard'));
-const StudentDashboard = lazy(() => import('./pages/User/Dashboard/Dashboard'));
-const Profile = lazy(() => import('./pages/Profile/Profile'));
-const Feed = lazy(() => import('./pages/Feed/Feed'));
+const Signup = lazy(() => import("./pages/Signup/Signup"));
+const Login = lazy(() => import("./pages/Login/Login"));
+const Role = lazy(() => import("./pages/Role/Role"));
+const MentorCompleteProfile = lazy(() =>
+  import("./pages/Mentor/CompleteProfile/CompleteProfile")
+);
+const StudentCompleteProfile = lazy(() =>
+  import("./pages/User/CompleteProfile/CompleteProfile")
+);
+const Dashboard = lazy(() => import("./pages/Admin/Dashboard/Dashboard"));
+const MentorDashboard = lazy(() =>
+  import("./pages/Mentor/Dashboard/Dashboard")
+);
+const StudentDashboard = lazy(() => import("./pages/User/Dashboard/Dashboard"));
+const Profile = lazy(() => import("./pages/Profile/Profile"));
+const Feed = lazy(() => import("./pages/Feed/Feed"));
 
-const JoinPage = lazy(() => import('./pages/Meeting/JoinPage'));
-const MeetingPage = lazy(() => import('./pages/Meeting/Meeting'));
-const ProjectsPage = lazy(() => import('./pages/Projects/ProjectsPage'));
-const ProjectDetailsPage = lazy(() => import('./pages/Projects/ProjectDetailsPage'));
-const JobDetail = lazy(() => import('./pages/JobDetails/JobDetails'));
-const UserDetailProfilePage = lazy(() => import('./pages/Profile/UserDetailProfilePage '));
-const Jobs = lazy(() => import('./pages/Jobs/Jobs'));
+const JoinPage = lazy(() => import("./pages/Meeting/JoinPage"));
+const MeetingPage = lazy(() => import("./pages/Meeting/Meeting"));
+const ProjectsPage = lazy(() => import("./pages/Projects/ProjectsPage"));
+const ProjectDetailsPage = lazy(() =>
+  import("./pages/Projects/ProjectDetailsPage")
+);
+const JobDetail = lazy(() => import("./pages/JobDetails/JobDetails"));
+const UserDetailProfilePage = lazy(() =>
+  import("./pages/Profile/UserDetailProfilePage ")
+);
+const Jobs = lazy(() => import("./pages/Jobs/Jobs"));
 
 // Loading fallback component
 const LoadingFallback = () => (
   <div className="flex items-center justify-center h-screen">
-    <Loader className="animate-spin size-20" /> 
+    <Loader className="animate-spin size-20" />
   </div>
 );
 
 function App() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
   const location = useLocation();
   const [showFooter, setShowFooter] = useState(true);
-  
+
   useEffect(() => {
     const isForumDetailPage = /^\/forum\/[^/]+$/.test(location.pathname);
     const isMeetingRoomPage = /^\/meeting\/[^/]+$/.test(location.pathname);
-    const isLoginPage = location.pathname === '/login';
-    const isSignupPage = location.pathname === '/signup';
-    
-    setShowFooter(!(isForumDetailPage || isMeetingRoomPage || isLoginPage || isSignupPage));
+    const isLoginPage = location.pathname === "/login";
+    const isSignupPage = location.pathname === "/signup";
+    const studentdashBoard = location.pathname === "/student-dashboard";
+    const mentor = location.pathname === "/mentor-dashboard";
+    const admin = location.pathname === "/admin";
 
+    setShowFooter(
+      !(
+        isForumDetailPage ||
+        isMeetingRoomPage ||
+        isLoginPage ||
+        isSignupPage ||
+        admin ||
+        mentor ||
+        studentdashBoard
+      )
+    );
   }, [location.pathname]);
-  
+
   return (
     <>
       <ModernNavbar />
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/signup" element={user ? <Navigate to={"/"} replace /> : <Signup />} />
-          <Route path="/login" element={user ? <Navigate to={"/"} replace /> : <Login />} />
-          <Route path="/role" element={<ProtectedRoute><Role /></ProtectedRoute>} />
-          <Route path="/mentor-complete-profile" element={<ProtectedRoute><MentorCompleteProfile /></ProtectedRoute>} />
-          <Route path="/student-complete-profile" element={<ProtectedRoute><StudentCompleteProfile /></ProtectedRoute>} />
-          <Route path="/admin" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-          <Route path="/profile/:userId" element={<ProtectedRoute><UserDetailProfilePage /></ProtectedRoute>} />
-          <Route path="/feed" element={<ProtectedRoute><Feed /></ProtectedRoute>} />
-          <Route path="/forum" element={<ProtectedRoute><Forums /></ProtectedRoute>} />
-          <Route path="/forum/:id" element={<ProtectedRoute><ForumDetail /></ProtectedRoute>} />
-          <Route path="/job/:jobId" element={<ProtectedRoute><JobDetail /></ProtectedRoute>} />
-          <Route path="/meeting" element={<ProtectedRoute><JoinPage /></ProtectedRoute>} />
-          <Route path="/meeting/:roomId" element={<ProtectedRoute><MeetingPage /></ProtectedRoute>} />
-          <Route path="/projects" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
-          <Route path="/project/:id" element={<ProtectedRoute><ProjectDetailsPage /></ProtectedRoute>} />
-          <Route path="/mentor-dashboard" element={<ProtectedRoute><MentorDashboard /></ProtectedRoute>} />
-          <Route path="/student-dashboard" element={<ProtectedRoute><StudentDashboard /></ProtectedRoute>} />
-          <Route path="/jobs" element={<ProtectedRoute><Jobs /></ProtectedRoute>} />
-          <Route path="/resume" element={<ProtectedRoute><ResumeBuilder /></ProtectedRoute>} />
+          <Route
+            path="/signup"
+            element={user ? <Navigate to={"/"} replace /> : <Signup />}
+          />
+          <Route
+            path="/login"
+            element={user ? <Navigate to={"/"} replace /> : <Login />}
+          />
+          <Route
+            path="/role"
+            element={
+              <ProtectedRoute>
+                <Role />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mentor-complete-profile"
+            element={
+              <ProtectedRoute>
+                <MentorCompleteProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student-complete-profile"
+            element={
+              <ProtectedRoute>
+                <StudentCompleteProfile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile/:userId"
+            element={
+              <ProtectedRoute>
+                <UserDetailProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/feed"
+            element={
+              <ProtectedRoute>
+                <Feed />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/forum"
+            element={
+              <ProtectedRoute>
+                <Forums />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/forum/:id"
+            element={
+              <ProtectedRoute>
+                <ForumDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/job/:jobId"
+            element={
+              <ProtectedRoute>
+                <JobDetail />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/meeting"
+            element={
+              <ProtectedRoute>
+                <JoinPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/meeting/:roomId"
+            element={
+              <ProtectedRoute>
+                <MeetingPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/projects"
+            element={
+              <ProtectedRoute>
+                <ProjectsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/project/:id"
+            element={
+              <ProtectedRoute>
+                <ProjectDetailsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/mentor-dashboard"
+            element={
+              <ProtectedRoute>
+                <MentorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student-dashboard"
+            element={
+              <ProtectedRoute>
+                <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/jobs"
+            element={
+              <ProtectedRoute>
+                <Jobs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/resume"
+            element={
+              <ProtectedRoute>
+                <ResumeBuilder />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/courses"
+            element={
+              <ProtectedRoute>
+                <CoursesPage />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Suspense>
       {showFooter && <Footer />}

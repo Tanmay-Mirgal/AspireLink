@@ -61,7 +61,7 @@ const ProjectDetailsPage = () => {
                 <User className="text-muted-foreground" size={24} />
                 <div>
                   <p className="text-sm text-muted-foreground">Mentor</p>
-                  <p className="font-medium text-lg">{selectedProject.mentorId.name}</p>
+                  <p className="font-medium text-lg">{selectedProject.mentorId.fullName}</p>
                   <a
                     href={`mailto:${selectedProject.mentorId.email}`}
                     className="text-primary hover:underline flex items-center gap-1"
