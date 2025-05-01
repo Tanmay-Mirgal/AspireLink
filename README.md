@@ -1,6 +1,11 @@
-# 🎓 AspireLink
 
-AspireLink is an AI-powered platform that bridges the gap between students, mentors, and industry professionals by offering a personalized career development ecosystem.
+<h1 align="center">🎓 AspireLink</h1>
+
+<p align="center">
+  <strong>Empowering Students, Mentors, and Professionals with AI-Driven Career Development</strong>
+</p>
+
+
 
 ---
 
@@ -61,18 +66,59 @@ AspireLink is an AI-powered platform that bridges the gap between students, ment
 ---
 
 ## 🛠 Tech Stack
-- Frontend: React.js / Next.js
-- Backend: Node.js, Express
-- Database: MongoDB
-- AI/ML: Python, TensorFlow, NLP models
-- Others: WebRTC (for video), Chart.js / D3.js (for analytics)
+
+### Frontend
+- ![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+- ![Shadcn UI](https://img.shields.io/badge/Shadcn_UI-000000?style=flat-square&logo=shadcn&logoColor=white)
+
+### Backend
+- ![Node.js](https://img.shields.io/badge/Node.js-339933?style=flat-square&logo=node.js&logoColor=white)
+- ![Express](https://img.shields.io/badge/Express.js-000000?style=flat-square&logo=express&logoColor=white)
+
+### Database
+- ![MongoDB](https://img.shields.io/badge/MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)
+
+### AI/ML
+- ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+- ![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-F7931E?style=flat-square&logo=scikit-learn&logoColor=white)
+- NLP Models: Tesseract, Poppler
+
+### Others
+- ![WebRTC](https://img.shields.io/badge/WebRTC-333333?style=flat-square&logo=webrtc&logoColor=white)
+- ![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=flat-square&logo=chart.js&logoColor=white)
+- ![D3.js](https://img.shields.io/badge/D3.js-F9A03C?style=flat-square&logo=d3.js&logoColor=white)
+
+---
+
+## 👥 Contributors
+
+Thanks to the following contributors for their valuable input:
+
+- [Tanmay Mirgal](https://github.com/Tanmay-Mirgal)
+
+*For a complete list of contributors, please visit the [Contributors Graph](https://github.com/Tanmay-Mirgal/AspireLink/graphs/contributors).*
 
 ---
 
 ## 📬 Contributions Welcome!
-Feel free to open issues or submit pull requests to improve AspireLink.
+
+We welcome contributions from the community! Feel free to:
+
+- Fork the repository
+- Create a new branch
+- Make your changes
+- Submit a pull request
+
+Please ensure your code adheres to the project's coding standards and includes relevant tests.
 
 ---
 
 ## 📄 License
-[MIT](LICENSE)
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+<p align="center">
+  <img src="https://github.com/Tanmay-Mirgal/AspireLink/assets/illustration.png" alt="AspireLink Illustration" width="600"/>
+</p>
